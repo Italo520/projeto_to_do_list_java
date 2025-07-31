@@ -1,7 +1,6 @@
-package br.com.poo.todolist.service;
+package br.com.todolist.service;
 
-import br.com.poo.todolist.models.Subtarefa;
-import br.com.poo.todolist.models.Tarefa;
+import br.com.todolist.models.Tarefa;
 
 import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
@@ -56,32 +55,6 @@ public class ManipuladorDeTarefas {
                 .collect(Collectors.toList());
     }
 
-   
-    public void adicionarSubtarefa(Tarefa tarefaPrincipal, Subtarefa subtarefa) {
-        tarefaPrincipal.getSubtarefas().add(subtarefa);
-        recalcularPercentualTarefa(tarefaPrincipal);
-    }
-
-
-
-    public void recalcularPercentualTarefa(Tarefa tarefa) {
-        if (tarefa.getSubtarefas().isEmpty()) {
-            return;
-        }
-        double media = tarefa.getSubtarefas().stream()
-                .mapToInt(Subtarefa::getPercentualConcluido)
-                .average()
-                .orElse(0.0);
-
-        // O tipo do percentual em Tarefa agora é double, então o cast (int) não é mais necessário
-        tarefa.setPercentual(Math.round(media)); 
-        
-        // Nomes dos métodos ATUALIZADOS para usar dataConclusao
-        if (tarefa.getPercentual() == 100 && tarefa.getDataConclusao() == null) {
-            tarefa.setDataConclusao(LocalDate.now());
-        }
-    }
-   
     
     public void setTarefas(List<Tarefa> tarefas) {
         this.tarefas = tarefas;

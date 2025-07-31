@@ -1,4 +1,4 @@
-package br.com.poo.todolist.models;
+package br.com.todolist.models;
 
 import java.time.LocalDate;
 

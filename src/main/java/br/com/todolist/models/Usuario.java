@@ -1,4 +1,4 @@
-package br.com.poo.todolist.models;
+package br.com.todolist.models;
 
 public class Usuario {
     private String nome;

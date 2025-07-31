@@ -1,6 +1,6 @@
-package br.com.poo.todolist.service;
+package br.com.todolist.service;
 
-import br.com.poo.todolist.models.Evento;
+import br.com.todolist.models.Evento;
 
 import java.time.LocalDate;
 import java.time.YearMonth;

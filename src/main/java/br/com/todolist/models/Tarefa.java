@@ -1,5 +1,5 @@
 // Copie e cole este código inteiro no seu arquivo Tarefa.java
-package br.com.poo.todolist.models;
+package br.com.todolist.models;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -14,7 +14,7 @@ public class Tarefa {
     private double percentual;
     private LocalDate dataConclusao; // ATRIBUTO RENOMEADO
     private int prioridade;
-    private List<Subtarefa> subtarefas;
+    private List<Tarefa> subtarefas;
 
     public Tarefa(String titulo, String descricao, LocalDate deadline, int prioridade) {
         this.titulo = titulo;
@@ -52,8 +52,8 @@ public class Tarefa {
     public int getPrioridade() { return prioridade; }
     public void setPrioridade(int prioridade) { this.prioridade = prioridade; }
 
-    public List<Subtarefa> getSubtarefas() { return subtarefas; }
-    public void setSubtarefas(List<Subtarefa> subtarefas) { this.subtarefas = subtarefas; }
+    public List<Tarefa> getSubtarefas() { return subtarefas; }
+    public void setSubtarefas(List<Tarefa> subtarefas) { this.subtarefas = subtarefas; }
     
     @Override
     public String toString() {

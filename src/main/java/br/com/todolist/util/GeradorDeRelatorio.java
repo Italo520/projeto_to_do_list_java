@@ -1,4 +1,4 @@
-package br.com.poo.todolist.util;
+package br.com.todolist.util;
 
 public class GeradorDeRelatorio {
 

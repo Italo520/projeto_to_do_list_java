@@ -1,4 +1,4 @@
-package br.com.poo.todolist.persistence;
+package br.com.todolist.persistence;
 
 import java.io.File;
 import java.io.FileReader;
@@ -8,8 +8,8 @@ import java.util.List;
 
 import com.thoughtworks.xstream.XStream;
 
-import br.com.poo.todolist.models.Evento;
-import br.com.poo.todolist.models.Tarefa;
+import br.com.todolist.models.Evento;
+import br.com.todolist.models.Tarefa;
 
 
 public class GerenciadorDePersistencia {
@@ -27,16 +27,16 @@ public GerenciadorDePersistencia(String nomeArquivo) {
     xstream.allowTypeHierarchy(java.util.List.class);
     xstream.allowTypeHierarchy(java.util.ArrayList.class);
     xstream.allowTypes(new Class[]{
-        br.com.poo.todolist.models.Tarefa.class,
-        br.com.poo.todolist.models.Evento.class,
-        br.com.poo.todolist.models.Subtarefa.class,
-        br.com.poo.todolist.models.Usuario.class
+        br.com.todolist.models.Tarefa.class,
+        br.com.todolist.models.Evento.class,
+        br.com.todolist.models.Subtarefa.class,
+        br.com.todolist.models.Usuario.class
     });
 
-    xstream.alias("tarefa", br.com.poo.todolist.models.Tarefa.class);
-    xstream.alias("subtarefa", br.com.poo.todolist.models.Subtarefa.class);
-    xstream.alias("evento", br.com.poo.todolist.models.Evento.class);
-    xstream.alias("usuario", br.com.poo.todolist.models.Usuario.class);
+    xstream.alias("tarefa", br.com.todolist.models.Tarefa.class);
+    xstream.alias("subtarefa", br.com.todolist.models.Subtarefa.class);
+    xstream.alias("evento", br.com.todolist.models.Evento.class);
+    xstream.alias("usuario", br.com.todolist.models.Usuario.class);
     
 
 }

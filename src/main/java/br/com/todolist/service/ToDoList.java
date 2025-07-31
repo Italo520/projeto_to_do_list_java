@@ -1,8 +1,8 @@
-package br.com.poo.todolist.service;
+package br.com.todolist.service;
 
-import br.com.poo.todolist.models.Evento;
-import br.com.poo.todolist.models.Tarefa;
-import br.com.poo.todolist.persistence.GerenciadorDePersistencia;
+import br.com.todolist.models.Evento;
+import br.com.todolist.models.Tarefa;
+import br.com.todolist.persistence.GerenciadorDePersistencia;
 
 import java.util.List;
 
@@ -41,9 +41,9 @@ public class ToDoList {
 
     public boolean cadastrarEvento(Evento evento) {
         boolean sucesso = manipuladorDeEventos.cadastrarEvento(evento);
-        // if (sucesso) {
-        //     salvarDados();
-        // }
+        if (sucesso) {
+            salvarDados();
+        }
         return sucesso;
     }
 
