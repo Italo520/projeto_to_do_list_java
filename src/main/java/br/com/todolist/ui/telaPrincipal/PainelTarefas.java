@@ -2,46 +2,23 @@ package br.com.todolist.ui.telaPrincipal;
 
 import java.awt.BorderLayout;
 import java.awt.FlowLayout;
-
 import javax.swing.JButton;
-import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
-import javax.swing.SwingConstants;
+import javax.swing.JTable; // Exemplo: usando uma JTable para listar tarefas
 
 public class PainelTarefas extends PainelBase {
-    private JButton botaoNovaTarefa;
-    private JButton botaoEditarTarefa;
-    private JButton botaoExcluirTarefa;
-
     
-    protected void inicializarPaineis() {
-        setLayout(new BorderLayout());
+    @Override
+    protected JPanel criarPainelDeBotoes() {
+        JPanel painel = new JPanel(new FlowLayout(FlowLayout.CENTER));
 
-        JPanel painelDeBotoes = criarPainelDeBotoes();
-        add(painelDeBotoes, BorderLayout.NORTH);
+        JButton botaoNovaTarefa = new JButton("Nova Tarefa");
+        JButton botaoEditarTarefa = new JButton("Editar Tarefa");
+        JButton botaoExcluirTarefa = new JButton("Excluir Tarefa");
 
-        JPanel painelDeConteudo = criarPainelDeConteudo();
-        add(painelDeConteudo, BorderLayout.CENTER);
-    
-    }
-
-
-    private JPanel criarPainelDeBotoes() {
-        JPanel painel = new JPanel();
-        
-        painel.setLayout(new FlowLayout(FlowLayout.CENTER));
-
-
-        botaoNovaTarefa = new JButton("Nova Tarefa");
-        botaoEditarTarefa = new JButton("Editar Tarefa");
-        botaoExcluirTarefa = new JButton("Excluir Tarefa");
-
-
-        botaoNovaTarefa.addActionListener(e -> System.out.println("Botão 'Nova Tarefa' clicado!"));
-        botaoEditarTarefa.addActionListener(e -> System.out.println("Botão 'Editar Tarefa' clicado!"));
-        botaoExcluirTarefa.addActionListener(e -> System.out.println("Botão 'Excluir Tarefa' clicado!"));
-
+        botaoNovaTarefa.addActionListener(e -> System.out.println("Abrir tela de nova tarefa..."));
+        // Adicione os outros listeners
 
         painel.add(botaoNovaTarefa);
         painel.add(botaoEditarTarefa);
@@ -50,16 +27,21 @@ public class PainelTarefas extends PainelBase {
         return painel;
     }
 
-    private JPanel criarPainelDeConteudo() {
-        JPanel painel = new JPanel();
+    @Override
+    protected JPanel criarPainelDeConteudo() {
+        JPanel painel = new JPanel(new BorderLayout());
 
-        JScrollPane scrollPane = new JScrollPane(new JLabel("", SwingConstants.CENTER));
-        painel.setLayout(new BorderLayout());
+        // Exemplo: Usando uma JTable para exibir as tarefas
+        String[] colunas = {"ID", "Descrição", "Status", "Prazo"};
+        Object[][] dados = {
+            {1, "Implementar herança na UI", "Em andamento", "01/08/2025"},
+            {2, "Refatorar código do backend", "Pendente", "15/08/2025"}
+        };
+        JTable tabelaTarefas = new JTable(dados, colunas);
+
+        JScrollPane scrollPane = new JScrollPane(tabelaTarefas);
         painel.add(scrollPane, BorderLayout.CENTER);
 
         return painel;
     }
-
-
-
 }
