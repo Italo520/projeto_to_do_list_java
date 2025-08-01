@@ -1,4 +1,5 @@
-// Copie e cole este código inteiro no seu arquivo Tarefa.java
+// Substitua o conteúdo em: src/main/java/br/com/todolist/models/Tarefa.java
+
 package br.com.todolist.models;
 
 import java.time.LocalDate;
@@ -12,9 +13,9 @@ public class Tarefa {
     private LocalDate dataCadastro;
     private LocalDate deadline;
     private double percentual;
-    private LocalDate dataConclusao; // ATRIBUTO RENOMEADO
+    private LocalDate dataConclusao;
     private int prioridade;
-    private List<Tarefa> subtarefas;
+    private List<Subtarefa> subtarefas; // <-- Alterado para usar a classe Subtarefa
 
     public Tarefa(String titulo, String descricao, LocalDate deadline, int prioridade) {
         this.titulo = titulo;
@@ -23,11 +24,11 @@ public class Tarefa {
         this.deadline = deadline;
         this.prioridade = prioridade;
         this.percentual = 0.0;
-        this.dataConclusao = null; // ATRIBUTO RENOMEADO
-        this.subtarefas = new ArrayList<>();
+        this.dataConclusao = null;
+        this.subtarefas = new ArrayList<>(); // <-- Inicializa a lista correta
     }
 
-    // --- GETTERS E SETTERS (com o nome atualizado) ---
+    // --- GETTERS E SETTERS ---
     
     public String getTitulo() { return titulo; }
     public void setTitulo(String titulo) { this.titulo = titulo; }
@@ -44,20 +45,35 @@ public class Tarefa {
     public double getPercentual() { return percentual; }
     public void setPercentual(double percentual) { this.percentual = percentual; }
     
-    // MÉTODO GET RENOMEADO
     public LocalDate getDataConclusao() { return dataConclusao; }
-    // MÉTODO SET RENOMEADO
     public void setDataConclusao(LocalDate dataConclusao) { this.dataConclusao = dataConclusao; }
 
     public int getPrioridade() { return prioridade; }
     public void setPrioridade(int prioridade) { this.prioridade = prioridade; }
 
-    public List<Tarefa> getSubtarefas() { return subtarefas; }
-    public void setSubtarefas(List<Tarefa> subtarefas) { this.subtarefas = subtarefas; }
+    // --- MÉTODOS PARA SUBTAREFAS (AGORA CORRETOS) ---
+    
+    public List<Subtarefa> getSubtarefas() { return subtarefas; }
+    public void setSubtarefas(List<Subtarefa> subtarefas) { this.subtarefas = subtarefas; }
+
+    /**
+     * Adiciona uma subtarefa à lista de subtarefas da tarefa.
+     * @param subtarefa A subtarefa a ser adicionada.
+     */
+    public void adicionarSubtarefa(Subtarefa subtarefa) {
+        this.subtarefas.add(subtarefa); // <-- IMPLEMENTADO
+    }
+
+    /**
+     * Remove uma subtarefa da lista de subtarefas da tarefa.
+     * @param subtarefa A subtarefa a ser removida.
+     */
+    public void removerSubtarefa(Subtarefa subtarefa) {
+        this.subtarefas.remove(subtarefa); // <-- IMPLEMENTADO
+    }
     
     @Override
     public String toString() {
-        return String.format("%s (Prioridade: %d, Prazo: %s)", 
-            getTitulo(), getPrioridade(), getDeadline().toString());
+        return getTitulo(); // Alterado para exibir apenas o título na JTree
     }
 }
