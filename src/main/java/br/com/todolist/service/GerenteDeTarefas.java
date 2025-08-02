@@ -1,63 +1,55 @@
 package br.com.todolist.service;
 
 import br.com.todolist.models.Tarefa;
-
 import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
 
-public class ManipuladorDeTarefas {
+public class GerenteDeTarefas {
 
-    private List<Tarefa> tarefas;
+    private final GerenteDeDadosDoUsuario gerenciadorDeDados;
 
-    public ManipuladorDeTarefas() {
-        this.tarefas = new ArrayList<>();
+    public GerenteDeTarefas(GerenteDeDadosDoUsuario gerenciadorDeDados) {
+        this.gerenciadorDeDados = gerenciadorDeDados;
     }
 
     public void cadastrarTarefa(Tarefa tarefa) {
-        this.tarefas.add(tarefa);
+        gerenciadorDeDados.getTarefas().add(tarefa);
+        gerenciadorDeDados.salvarDados();
     }
 
     public List<Tarefa> listarTodasTarefas() {
-        return this.tarefas;
+        return gerenciadorDeDados.getTarefas();
     }
 
     public void excluirTarefa(Tarefa tarefa) {
-        this.tarefas.remove(tarefa);
+        gerenciadorDeDados.getTarefas().remove(tarefa);
+        gerenciadorDeDados.salvarDados();
     }
-
-   
+    
     public void editarTarefa(Tarefa tarefaOriginal, String novoTitulo, String novaDescricao, LocalDate novoDeadline, int novaPrioridade) {
         tarefaOriginal.setTitulo(novoTitulo);
         tarefaOriginal.setDescricao(novaDescricao);
         tarefaOriginal.setDeadline(novoDeadline);
         tarefaOriginal.setPrioridade(novaPrioridade);
+        gerenciadorDeDados.salvarDados();
     }
 
-
     public List<Tarefa> listarTarefasPorDia(LocalDate dia) {
-        return tarefas.stream()
+        return gerenciadorDeDados.getTarefas().stream()
                 .filter(tarefa -> tarefa.getDeadline().isEqual(dia))
                 .collect(Collectors.toList());
     }
 
- 
     public List<Tarefa> listarTarefasCriticas() {
         LocalDate hoje = LocalDate.now();
-        return tarefas.stream()
+        return gerenciadorDeDados.getTarefas().stream()
                 .filter(tarefa -> {
                     long diasRestantes = ChronoUnit.DAYS.between(hoje, tarefa.getDeadline());
                     return (diasRestantes - tarefa.getPrioridade()) < 0;
                 })
                 .collect(Collectors.toList());
     }
-
-    
-    public void setTarefas(List<Tarefa> tarefas) {
-        this.tarefas = tarefas;
-    }
-
 }
