@@ -1,105 +1,88 @@
-// Crie este novo arquivo em: src/main/java/br/com/todolist/ui/telaPrincipal/DialogoTarefa.java
-
+// Em: src/main/java/br/com/todolist/ui/TelasDialogo/DialogoTarefa.java
 package br.com.todolist.ui.TelasDialogo;
 
-import java.awt.Frame;
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
-import java.awt.Insets;
+import br.com.todolist.models.Tarefa;
+import br.com.todolist.service.Orquestrador;
+
+import javax.swing.*;
+import java.awt.*;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
 
-import javax.swing.JButton;
-import javax.swing.JDialog;
-import javax.swing.JLabel;
-import javax.swing.JOptionPane;
-import javax.swing.JSpinner;
-import javax.swing.JTextField;
-import javax.swing.SpinnerNumberModel;
-import br.com.todolist.models.Tarefa;
-
 public class DialogoTarefa extends JDialog {
+
+    private final Orquestrador orquestrador;
+    private Tarefa tarefa; // Opcional, nulo para nova tarefa, preenchido para edição
 
     private JTextField campoTitulo;
     private JTextField campoDescricao;
     private JSpinner campoPrioridade;
-    private JTextField campoPrazo; // Para simplicidade, usaremos texto. Formato: dd/MM/yyyy
+    private JTextField campoPrazo;
 
     private JButton botaoSalvar;
     private JButton botaoCancelar;
 
-    private Tarefa tarefa;
     private boolean salvo = false;
-    private DateTimeFormatter formatadorDeData = DateTimeFormatter.ofPattern("dd/MM/yyyy");
+    private final DateTimeFormatter formatadorDeData = DateTimeFormatter.ofPattern("dd/MM/yyyy");
 
-    /**
-     * Construtor para criar uma NOVA tarefa.
-     */
-    public DialogoTarefa(Frame owner) {
-        super(owner, "Nova Tarefa", true); // O 'true' torna o diálogo modal
-        this.tarefa = null;
+    // Construtor para NOVA tarefa
+    public DialogoTarefa(Frame owner, Orquestrador orquestrador) {
+        super(owner, "Nova Tarefa", true);
+        this.orquestrador = orquestrador;
+        this.tarefa = null; // Indica que é uma criação
         montarLayout();
         configurarAcoes();
-        pack(); // Ajusta o tamanho da janela ao conteúdo
-        setLocationRelativeTo(owner); // Centraliza em relação à janela principal
+        pack();
+        setLocationRelativeTo(owner);
     }
 
-    /**
-     * Construtor para EDITAR uma tarefa existente.
-     */
-    public DialogoTarefa(Frame owner, Tarefa tarefaParaEditar) {
+    // Construtor para EDITAR tarefa
+    public DialogoTarefa(Frame owner, Orquestrador orquestrador, Tarefa tarefaParaEditar) {
         super(owner, "Editar Tarefa", true);
-        this.tarefa = tarefaParaEditar;
+        this.orquestrador = orquestrador;
+        this.tarefa = tarefaParaEditar; // Guarda a referência da tarefa a ser editada
         montarLayout();
         preencherCampos();
         configurarAcoes();
         pack();
         setLocationRelativeTo(owner);
     }
-    
+
+    public boolean foiSalvo() {
+        return this.salvo;
+    }
+
     private void montarLayout() {
         setLayout(new GridBagLayout());
         GridBagConstraints gbc = new GridBagConstraints();
-        gbc.insets = new Insets(5, 5, 5, 5); // Espaçamento
+        gbc.insets = new Insets(5, 5, 5, 5);
         gbc.fill = GridBagConstraints.HORIZONTAL;
 
-        // Título
-        gbc.gridx = 0; gbc.gridy = 0;
-        add(new JLabel("Título:"), gbc);
+        gbc.gridx = 0; gbc.gridy = 0; add(new JLabel("Título:"), gbc);
         gbc.gridx = 1; gbc.gridy = 0; gbc.gridwidth = 2;
-        campoTitulo = new JTextField(25);
-        add(campoTitulo, gbc);
+        campoTitulo = new JTextField(25); add(campoTitulo, gbc);
 
-        // Descrição
-        gbc.gridx = 0; gbc.gridy = 1;
-        add(new JLabel("Descrição:"), gbc);
+        gbc.gridx = 0; gbc.gridy = 1; add(new JLabel("Descrição:"), gbc);
         gbc.gridx = 1; gbc.gridy = 1; gbc.gridwidth = 2;
-        campoDescricao = new JTextField(25);
-        add(campoDescricao, gbc);
+        campoDescricao = new JTextField(25); add(campoDescricao, gbc);
 
-        // Prioridade
-        gbc.gridx = 0; gbc.gridy = 2; gbc.gridwidth = 1;
-        add(new JLabel("Prioridade:"), gbc);
+        gbc.gridx = 0; gbc.gridy = 2; gbc.gridwidth = 1; add(new JLabel("Prioridade:"), gbc);
         gbc.gridx = 1; gbc.gridy = 2;
-        campoPrioridade = new JSpinner(new SpinnerNumberModel(1, 1, 5, 1)); // Valor inicial 1, min 1, max 5, passo 1
-        add(campoPrioridade, gbc);
+        campoPrioridade = new JSpinner(new SpinnerNumberModel(1, 1, 5, 1)); add(campoPrioridade, gbc);
 
-        // Prazo
-        gbc.gridx = 0; gbc.gridy = 3;
-        add(new JLabel("Prazo (dd/MM/yyyy):"), gbc);
+        gbc.gridx = 0; gbc.gridy = 3; add(new JLabel("Prazo (dd/MM/yyyy):"), gbc);
         gbc.gridx = 1; gbc.gridy = 3; gbc.gridwidth = 2;
-        campoPrazo = new JTextField(10);
-        add(campoPrazo, gbc);
+        campoPrazo = new JTextField(10); add(campoPrazo, gbc);
 
-        // Botões
-        gbc.gridx = 1; gbc.gridy = 4; gbc.gridwidth = 1; gbc.fill = GridBagConstraints.NONE; gbc.anchor = GridBagConstraints.CENTER;
+        JPanel painelBotoes = new JPanel(new FlowLayout(FlowLayout.CENTER));
         botaoSalvar = new JButton("Salvar");
-        add(botaoSalvar, gbc);
-
-        gbc.gridx = 2; gbc.gridy = 4;
         botaoCancelar = new JButton("Cancelar");
-        add(botaoCancelar, gbc);
+        painelBotoes.add(botaoSalvar);
+        painelBotoes.add(botaoCancelar);
+
+        gbc.gridx = 0; gbc.gridy = 4; gbc.gridwidth = 3; gbc.fill = GridBagConstraints.NONE;
+        add(painelBotoes, gbc);
     }
 
     private void preencherCampos() {
@@ -112,52 +95,36 @@ public class DialogoTarefa extends JDialog {
     }
 
     private void configurarAcoes() {
-        botaoCancelar.addActionListener(e -> dispose()); // Simplesmente fecha a janela
-
-        botaoSalvar.addActionListener(e -> {
-            if (validarCampos()) {
-                // Pega os valores dos campos
-                String titulo = campoTitulo.getText();
-                String descricao = campoDescricao.getText();
-                int prioridade = (int) campoPrioridade.getValue();
-                LocalDate prazo = LocalDate.parse(campoPrazo.getText(), formatadorDeData);
-
-                // Se estamos editando, atualiza o objeto existente. Se não, cria um novo.
-                if (this.tarefa == null) {
-                    this.tarefa = new Tarefa(titulo, descricao, prazo, prioridade);
-                } else {
-                    this.tarefa.setTitulo(titulo);
-                    this.tarefa.setDescricao(descricao);
-                    this.tarefa.setPrioridade(prioridade);
-                    this.tarefa.setDeadline(prazo);
-                }
-                
-                this.salvo = true;
-                dispose(); // Fecha a janela
-            }
-        });
+        botaoCancelar.addActionListener(e -> dispose()); // dispose() fecha a janela
+        botaoSalvar.addActionListener(e -> salvar());
     }
 
-    private boolean validarCampos() {
-        if (campoTitulo.getText().trim().isEmpty()) {
-            JOptionPane.showMessageDialog(this, "O campo 'Título' é obrigatório.", "Erro de Validação", JOptionPane.ERROR_MESSAGE);
-            return false;
-        }
+    private void salvar() {
         try {
-            LocalDate.parse(campoPrazo.getText(), formatadorDeData);
+            // 1. Coleta e valida os dados do formulário
+            String titulo = campoTitulo.getText().trim();
+            if (titulo.isEmpty()) {
+                JOptionPane.showMessageDialog(this, "O campo 'Título' é obrigatório.", "Erro de Validação", JOptionPane.ERROR_MESSAGE);
+                return;
+            }
+            String descricao = campoDescricao.getText().trim();
+            int prioridade = (int) campoPrioridade.getValue();
+            LocalDate prazo = LocalDate.parse(campoPrazo.getText(), formatadorDeData);
+
+            // 2. Decide se é uma nova tarefa ou uma edição
+            if (this.tarefa == null) { // Criando uma nova tarefa
+                Tarefa novaTarefa = new Tarefa(titulo, descricao, prazo, prioridade);
+                orquestrador.cadastrarTarefa(novaTarefa);
+            } else { // Editando uma tarefa existente
+                orquestrador.editarTarefa(this.tarefa, titulo, descricao, prazo, prioridade);
+            }
+
+            // 3. Sinaliza que a operação foi bem-sucedida e fecha o diálogo
+            this.salvo = true;
+            dispose();
+
         } catch (DateTimeParseException e) {
-            JOptionPane.showMessageDialog(this, "O formato da data para o 'Prazo' é inválido. Use dd/MM/yyyy.", "Erro de Validação", JOptionPane.ERROR_MESSAGE);
-            return false;
+            JOptionPane.showMessageDialog(this, "Formato de data inválido. Use dd/MM/yyyy.", "Erro de Formato", JOptionPane.ERROR_MESSAGE);
         }
-        return true;
-    }
-
-    // Métodos públicos para o PainelTarefas obter o resultado
-    public Tarefa getTarefa() {
-        return this.tarefa;
-    }
-
-    public boolean foiSalvo() {
-        return this.salvo;
     }
 }

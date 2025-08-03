@@ -11,11 +11,9 @@ public class TelaPrincipal extends JFrame {
 
     private Orquestrador orquestrador;
 
-    // O construtor agora recebe o usuário que foi autenticado na tela de login
     public TelaPrincipal(Usuario usuarioLogado) {
         super("ToDoLIst - Usuário: " + usuarioLogado.getNome());
 
-        // O Orquestrador é criado com base no usuário que fez o login
         this.orquestrador = new Orquestrador(usuarioLogado);
 
         configurarJanela();
@@ -29,7 +27,7 @@ public class TelaPrincipal extends JFrame {
     }
 
     private void montarLayout() {
-        // Precisamos passar 'this' para o ActionListener do relatório funcionar
+
         setJMenuBar(BarraFerramentas.criarBarraFerramentas(this));
         JTabbedPane painelComAbas = criarPaineis();
 
@@ -42,16 +40,10 @@ public class TelaPrincipal extends JFrame {
 
         // No futuro, os painéis também podem precisar do orquestrador
         // Ex: new PainelTarefas(this.orquestrador)
-        aba.addTab("Tarefas", null, new PainelTarefas(), "Gerenciador de Tarefas");
-        aba.addTab("Eventos", null, new PainelEventos(), "Gerenciador de Eventos");
+        aba.addTab("Tarefas", null, new PainelTarefas(this.orquestrador), "Gerenciador de Tarefas");
+        aba.addTab("Eventos", null, new PainelEventos(this.orquestrador), "Gerenciador de Eventos");
 
         return aba;
     }
 
-    // Método para ser chamado pelo menu da barra de ferramentas
-    public void gerarRelatorioGeral() {
-        String nomeDoArquivo = orquestrador.gerarRelatorioGeral();
-        // ... Lógica para mostrar um JOptionPane, se desejar.
-        System.out.println("Relatório " + nomeDoArquivo + " gerado!");
-    }
 }

@@ -32,7 +32,7 @@ public class GerenteDeTarefas {
     public void editarTarefa(Tarefa tarefaOriginal, String novoTitulo, String novaDescricao, LocalDate novoDeadline, int novaPrioridade) {
         tarefaOriginal.setTitulo(novoTitulo);
         tarefaOriginal.setDescricao(novaDescricao);
-        tarefaOriginal.setDeadline(novoDeadline);
+        tarefaOriginal.setDeadLine(novoDeadline);
         tarefaOriginal.setPrioridade(novaPrioridade);
         gerenciadorDeDados.salvarDados();
     }
@@ -52,4 +52,15 @@ public class GerenteDeTarefas {
                 })
                 .collect(Collectors.toList());
     }
+
+    public void atualizarTarefa(Tarefa tarefa) {
+        if (gerenciadorDeDados.getTarefas().contains(tarefa)) {
+            gerenciadorDeDados.salvarDados();
+            System.out.println("Tarefa atualizada e dados salvos.");
+        } else {
+            System.err.println("Aviso: Tentativa de atualizar uma tarefa não encontrada.");
+        }
+    }
+
+
 }

@@ -4,11 +4,8 @@ package br.com.todolist.service;
 import br.com.todolist.models.Evento;
 import br.com.todolist.models.Tarefa;
 import br.com.todolist.models.Usuario;
-import br.com.todolist.util.Central;
-
 import java.time.LocalDate;
 import java.time.YearMonth;
-import java.util.ArrayList;
 import java.util.List;
 
 
@@ -37,9 +34,13 @@ public class Orquestrador {
     public void excluirTarefa(Tarefa tarefa) {
         this.gerenteDeTarefas.excluirTarefa(tarefa);
     }
-
+    //editar tarefa edita a tarefa da de editar tarefa
     public void editarTarefa(Tarefa tarefaOriginal, String novoTitulo, String novaDescricao, LocalDate novoDeadline, int novaPrioridade) {
         this.gerenteDeTarefas.editarTarefa(tarefaOriginal, novoTitulo, novaDescricao, novoDeadline, novaPrioridade);
+    }
+    //atualizar tarefa atualiza o objeto tarefa com suas subtarefas
+    public void atualizarTarefa(Tarefa tarefa) {
+        this.gerenteDeTarefas.atualizarTarefa(tarefa);
     }
 
     public List<Tarefa> listarTarefasPorDia(LocalDate dia) {

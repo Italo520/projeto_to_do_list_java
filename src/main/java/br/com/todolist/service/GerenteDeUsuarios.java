@@ -1,8 +1,11 @@
-package br.com.todolist.services;
+package br.com.todolist.service;
 import br.com.todolist.models.Usuario;
 import br.com.todolist.persistence.GerenciadorDePersistenciaJson;
+
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
+import org.mindrot.jbcrypt.BCrypt;
 
 public class GerenteDeUsuarios {
 

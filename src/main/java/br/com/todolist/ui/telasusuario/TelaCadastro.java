@@ -1,80 +1,104 @@
-package main.java.br.com.todolist.ui.telasusuario;
-
-
-import java.awt.Frame;
-import javax.swing.JButton;
-import javax.swing.JDialog;
-import javax.swing.JLabel;
-import javax.swing.JOptionPane;
-import javax.swing.JPasswordField;
-import javax.swing.JTextField;
+package br.com.todolist.ui.telasusuario;
 
 import br.com.todolist.service.GerenteDeUsuarios;
 
+import javax.swing.*;
+import java.awt.*;
+
 public class TelaCadastro extends JDialog {
 
-    private JLabel labelNome, labelEmail, labelSenha;
     private JTextField campoNome;
     private JTextField campoEmail;
     private JPasswordField campoSenha;
     private JButton botaoCadastrar;
     private JButton botaoCancelar;
-    private GerenteDeUsuarios gerenteDeUsuarios;
+    
+    // 1. A dependência agora é recebida, não criada aqui.
+    private final GerenteDeUsuarios gerenteDeUsuarios;
 
-    public TelaCadastro(Frame owner) {
+    // Construtor atualizado para receber a dependência
+    public TelaCadastro(Frame owner, GerenteDeUsuarios gerenteDeUsuarios) {
         super(owner, "Criar Nova Conta", true);
-        this.gerenteDeUsuarios = new GerenteDeUsuarios();
+        this.gerenteDeUsuarios = gerenteDeUsuarios;
 
-        // 1. Definindo o layout como nulo
-        setLayout(null);
-        
-        montarLayout();
+        montarLayoutComGridBag(); // Usando o novo método de layout
         configurarAcoes();
 
-        // 2. Definindo um tamanho fixo para a janela, já que pack() não funciona bem com layout nulo
-        setSize(350, 220);
+        pack(); // 2. pack() ajusta o tamanho da janela ao conteúdo. É o ideal com LayoutManagers.
         setResizable(false);
         setLocationRelativeTo(owner);
     }
 
-    private void montarLayout() {
-        // Rótulos
-        labelNome = new JLabel("Nome:");
-        labelNome.setBounds(20, 20, 80, 25); // (x, y, largura, altura)
-        add(labelNome);
-
-        labelEmail = new JLabel("Email:");
-        labelEmail.setBounds(20, 60, 80, 25);
-        add(labelEmail);
-
-        labelSenha = new JLabel("Senha:");
-        labelSenha.setBounds(20, 100, 80, 25);
-        add(labelSenha);
-
-        // Campos de Texto
-        campoNome = new JTextField();
-        campoNome.setBounds(100, 20, 210, 25);
-        add(campoNome);
-
-        campoEmail = new JTextField();
-        campoEmail.setBounds(100, 60, 210, 25);
-        add(campoEmail);
-
-        campoSenha = new JPasswordField();
-        campoSenha.setBounds(100, 100, 210, 25);
-        add(campoSenha);
+    private void montarLayoutComGridBag() {
+        // Usando GridBagLayout para um formulário flexível e robusto
+        setLayout(new GridBagLayout());
+        GridBagConstraints gbc = new GridBagConstraints();
         
-        // Botões
-        botaoCadastrar = new JButton("Cadastrar");
-        botaoCadastrar.setBounds(100, 140, 100, 30);
-        add(botaoCadastrar);
+        // Insets definem uma margem interna para cada componente (top, left, bottom, right)
+        gbc.insets = new Insets(5, 5, 5, 5);
+        gbc.fill = GridBagConstraints.HORIZONTAL; // Faz os componentes preencherem o espaço horizontal
 
+        // Linha 0: Rótulo Nome
+        gbc.gridx = 0;
+        gbc.gridy = 0;
+        gbc.anchor = GridBagConstraints.EAST; // Alinha o rótulo à direita
+        add(new JLabel("Nome:"), gbc);
+
+        // Linha 0: Campo Nome
+        gbc.gridx = 1;
+        gbc.gridy = 0;
+        gbc.gridwidth = 2; // Ocupa 2 colunas
+        gbc.anchor = GridBagConstraints.WEST; // Alinha o campo à esquerda
+        campoNome = new JTextField(20); // O '20' sugere um tamanho preferencial
+        add(campoNome, gbc);
+        
+        // Linha 1: Rótulo Email
+        gbc.gridx = 0;
+        gbc.gridy = 1;
+        gbc.gridwidth = 1; // Reseta para 1 coluna
+        gbc.anchor = GridBagConstraints.EAST;
+        add(new JLabel("Email:"), gbc);
+
+        // Linha 1: Campo Email
+        gbc.gridx = 1;
+        gbc.gridy = 1;
+        gbc.gridwidth = 2;
+        gbc.anchor = GridBagConstraints.WEST;
+        campoEmail = new JTextField(20);
+        add(campoEmail, gbc);
+
+        // Linha 2: Rótulo Senha
+        gbc.gridx = 0;
+        gbc.gridy = 2;
+        gbc.gridwidth = 1;
+        gbc.anchor = GridBagConstraints.EAST;
+        add(new JLabel("Senha:"), gbc);
+
+        // Linha 2: Campo Senha
+        gbc.gridx = 1;
+        gbc.gridy = 2;
+        gbc.gridwidth = 2;
+        gbc.anchor = GridBagConstraints.WEST;
+        campoSenha = new JPasswordField(20);
+        add(campoSenha, gbc);
+
+        // Linha 3: Painel de Botões
+        JPanel painelBotoes = new JPanel(new FlowLayout(FlowLayout.RIGHT)); // Alinha botões à direita
+        botaoCadastrar = new JButton("Cadastrar");
         botaoCancelar = new JButton("Cancelar");
-        botaoCancelar.setBounds(210, 140, 100, 30);
-        add(botaoCancelar);
+        painelBotoes.add(botaoCadastrar);
+        painelBotoes.add(botaoCancelar);
+
+        gbc.gridx = 0;
+        gbc.gridy = 3;
+        gbc.gridwidth = 3; // Ocupa 3 colunas
+        gbc.fill = GridBagConstraints.NONE;
+        gbc.anchor = GridBagConstraints.CENTER;
+        add(painelBotoes, gbc);
     }
 
     private void configurarAcoes() {
+        // A lógica de ações permanece a mesma, pois já estava boa!
         botaoCancelar.addActionListener(e -> dispose());
 
         botaoCadastrar.addActionListener(e -> {
@@ -87,12 +111,15 @@ public class TelaCadastro extends JDialog {
                 return;
             }
 
+            // A chamada ao gerente agora usa a instância injetada
             boolean sucesso = gerenteDeUsuarios.criarNovoUsuario(nome, email, senha);
 
             if (sucesso) {
                 JOptionPane.showMessageDialog(this, "Usuário cadastrado com sucesso!", "Sucesso", JOptionPane.INFORMATION_MESSAGE);
-                dispose();
+                dispose(); // Fecha a tela de cadastro
             } else {
+                // A sua classe GerenteDeUsuarios imprime o erro no console.
+                // Uma mensagem genérica aqui é mais segura.
                 JOptionPane.showMessageDialog(this, "Este email já está em uso. Tente outro.", "Erro no Cadastro", JOptionPane.ERROR_MESSAGE);
             }
         });

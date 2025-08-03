@@ -1,3 +1,5 @@
+package br.com.todolist.models;
+
 import java.time.LocalDate;
 
 public abstract class Itens{

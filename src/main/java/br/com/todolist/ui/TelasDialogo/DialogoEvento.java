@@ -1,41 +1,34 @@
-// Crie este novo arquivo em: src/main/java/br/com/todolist/ui/telaPrincipal/DialogoEvento.java
-
+// Em: src/main/java/br/com/todolist/ui/TelasDialogo/DialogoEvento.java
 package br.com.todolist.ui.TelasDialogo;
 
-import java.awt.Frame;
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
-import java.awt.Insets;
+import br.com.todolist.models.Evento;
+import br.com.todolist.service.Orquestrador;
+
+import javax.swing.*;
+import java.awt.*;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
 
-import javax.swing.JButton;
-import javax.swing.JDialog;
-import javax.swing.JLabel;
-import javax.swing.JOptionPane;
-import javax.swing.JTextField;
-
-import br.com.todolist.models.Evento;
-
 public class DialogoEvento extends JDialog {
+
+    private final Orquestrador orquestrador;
+    private Evento evento;
 
     private JTextField campoTitulo;
     private JTextField campoDescricao;
-    private JTextField campoData; // Formato: dd/MM/yyyy
+    private JTextField campoData;
 
     private JButton botaoSalvar;
     private JButton botaoCancelar;
 
-    private Evento evento;
     private boolean salvo = false;
-    private DateTimeFormatter formatadorDeData = DateTimeFormatter.ofPattern("dd/MM/yyyy");
+    private final DateTimeFormatter formatadorDeData = DateTimeFormatter.ofPattern("dd/MM/yyyy");
 
-    /**
-     * Construtor para criar um NOVO evento.
-     */
-    public DialogoEvento(Frame owner) {
+    // Construtor para um novo evento
+    public DialogoEvento(Frame owner, Orquestrador orquestrador) {
         super(owner, "Novo Evento", true);
+        this.orquestrador = orquestrador;
         this.evento = null;
         montarLayout();
         configurarAcoes();
@@ -43,11 +36,10 @@ public class DialogoEvento extends JDialog {
         setLocationRelativeTo(owner);
     }
 
-    /**
-     * Construtor para EDITAR um evento existente.
-     */
-    public DialogoEvento(Frame owner, Evento eventoParaEditar) {
+    // Construtor para editar um evento existente
+    public DialogoEvento(Frame owner, Orquestrador orquestrador, Evento eventoParaEditar) {
         super(owner, "Editar Evento", true);
+        this.orquestrador = orquestrador;
         this.evento = eventoParaEditar;
         montarLayout();
         preencherCampos();
@@ -62,67 +54,73 @@ public class DialogoEvento extends JDialog {
         gbc.insets = new Insets(5, 5, 5, 5);
         gbc.fill = GridBagConstraints.HORIZONTAL;
 
-        // Título
-        gbc.gridx = 0; gbc.gridy = 0;
-        add(new JLabel("Título:"), gbc);
+        gbc.gridx = 0; gbc.gridy = 0; add(new JLabel("Título:"), gbc);
         gbc.gridx = 1; gbc.gridy = 0; gbc.gridwidth = 2;
-        campoTitulo = new JTextField(25);
-        add(campoTitulo, gbc);
+        campoTitulo = new JTextField(25); add(campoTitulo, gbc);
 
-        // Descrição
-        gbc.gridx = 0; gbc.gridy = 1;
-        add(new JLabel("Descrição:"), gbc);
+        gbc.gridx = 0; gbc.gridy = 1; add(new JLabel("Descrição:"), gbc);
         gbc.gridx = 1; gbc.gridy = 1; gbc.gridwidth = 2;
-        campoDescricao = new JTextField(25);
-        add(campoDescricao, gbc);
+        campoDescricao = new JTextField(25); add(campoDescricao, gbc);
 
-        // Data do Evento
-        gbc.gridx = 0; gbc.gridy = 2; gbc.gridwidth = 1;
-        add(new JLabel("Data (dd/MM/yyyy):"), gbc);
+        // O label foi alterado para refletir o conceito de 'Deadline'
+        gbc.gridx = 0; gbc.gridy = 2; gbc.gridwidth = 1; add(new JLabel("Deadline (dd/MM/yyyy):"), gbc);
         gbc.gridx = 1; gbc.gridy = 2; gbc.gridwidth = 2;
-        campoData = new JTextField(10);
-        add(campoData, gbc);
+        campoData = new JTextField(10); add(campoData, gbc);
 
-        // Botões
-        gbc.gridx = 1; gbc.gridy = 3; gbc.gridwidth = 1; gbc.fill = GridBagConstraints.NONE; gbc.anchor = GridBagConstraints.CENTER;
+        JPanel painelBotoes = new JPanel(new FlowLayout(FlowLayout.CENTER));
         botaoSalvar = new JButton("Salvar");
-        add(botaoSalvar, gbc);
-
-        gbc.gridx = 2; gbc.gridy = 3;
         botaoCancelar = new JButton("Cancelar");
-        add(botaoCancelar, gbc);
+        painelBotoes.add(botaoSalvar);
+        painelBotoes.add(botaoCancelar);
+        
+        gbc.gridx = 0; gbc.gridy = 3; gbc.gridwidth = 3; gbc.fill = GridBagConstraints.NONE;
+        add(painelBotoes, gbc);
     }
 
     private void preencherCampos() {
         if (evento != null) {
             campoTitulo.setText(evento.getTitulo());
             campoDescricao.setText(evento.getDescricao());
-            campoData.setText(evento.getDataEvento().format(formatadorDeData));
+            // CORREÇÃO: Utilizando getDeadline() ao invés de getDataEvento()
+            campoData.setText(evento.getDeadline().format(formatadorDeData));
         }
     }
 
     private void configurarAcoes() {
         botaoCancelar.addActionListener(e -> dispose());
+        botaoSalvar.addActionListener(e -> salvar());
+    }
 
-        botaoSalvar.addActionListener(e -> {
-            if (validarCampos()) {
-                String titulo = campoTitulo.getText();
-                String descricao = campoDescricao.getText();
-                LocalDate dataEvento = LocalDate.parse(campoData.getText(), formatadorDeData);
+    private void salvar() {
+        if (!validarCampos()) {
+            return;
+        }
 
-                if (this.evento == null) {
-                    // Para um novo evento, a data de cadastro é hoje.
-                    this.evento = new Evento(titulo, descricao, LocalDate.now(), dataEvento);
-                } else {
-                    this.evento.setTitulo(titulo);
-                    this.evento.setDescricao(descricao);
-                    this.evento.setDataEvento(dataEvento);
+        String titulo = campoTitulo.getText();
+        String descricao = campoDescricao.getText();
+        // A variável agora se chama 'deadline' para maior clareza
+        LocalDate deadline = LocalDate.parse(campoData.getText(), formatadorDeData);
+
+        try {
+            if (this.evento == null) {
+                // A variável 'deadline' é passada para o construtor e para o método do orquestrador
+                Evento novoEvento = new Evento(titulo, descricao, deadline);
+                boolean sucesso = orquestrador.cadastrarEvento(novoEvento);
+                if (!sucesso) {
+                     JOptionPane.showMessageDialog(this, "Não foi possível cadastrar o evento.\nVerifique se já não existe um evento com o mesmo título.", "Erro ao Cadastrar", JOptionPane.WARNING_MESSAGE);
+                     return;
                 }
-                
-                this.salvo = true;
-                dispose();
+            } else {
+                orquestrador.editarEvento(this.evento, titulo, descricao, deadline);
             }
-        });
+            
+            this.salvo = true;
+            dispose();
+
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(this, "Ocorreu um erro ao salvar o evento:\n" + e.getMessage(), "Erro", JOptionPane.ERROR_MESSAGE);
+            e.printStackTrace();
+        }
     }
 
     private boolean validarCampos() {
@@ -137,10 +135,6 @@ public class DialogoEvento extends JDialog {
             return false;
         }
         return true;
-    }
-
-    public Evento getEvento() {
-        return this.evento;
     }
 
     public boolean foiSalvo() {

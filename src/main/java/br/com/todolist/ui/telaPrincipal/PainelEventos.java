@@ -1,36 +1,27 @@
-// Substitua o conteúdo em: src/main/java/br/com/todolist/ui/telaPrincipal/PainelEventos.java
-
+// Conteúdo para: src/main/java/br/com/todolist/ui/telaPrincipal/PainelEventos.java
 package br.com.todolist.ui.telaPrincipal;
 
-import java.awt.BorderLayout;
-import java.awt.FlowLayout;
-import java.awt.Frame;
-import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.List;
-
-import javax.swing.BorderFactory;
-import javax.swing.DefaultListModel;
-import javax.swing.JButton;
-import javax.swing.JList;
-import javax.swing.JOptionPane;
-import javax.swing.JPanel;
-import javax.swing.JScrollPane;
-import javax.swing.JSplitPane;
-import javax.swing.JTextArea;
-import javax.swing.ListSelectionModel;
-import javax.swing.SwingUtilities;
-
 import br.com.todolist.models.Evento;
+import br.com.todolist.service.Orquestrador; // MUDANÇA: Import do Orquestrador
 import br.com.todolist.ui.TelasDialogo.DialogoEvento;
 
+import javax.swing.*;
+import java.awt.*;
+
 public class PainelEventos extends PainelBase {
+
+    // MUDANÇA: O Orquestrador é a nova fonte da verdade para os dados.
+    private final Orquestrador orquestrador;
 
     private DefaultListModel<Evento> modeloListaEventos;
     private JList<Evento> listaDeEventos;
     private JTextArea areaDescricao;
 
-    private List<Evento> meusEventos;
+    // MUDANÇA: Construtor agora recebe o Orquestrador (Injeção de Dependência).
+    public PainelEventos(Orquestrador orquestrador) {
+        this.orquestrador = orquestrador;
+        // O método buildPanel() (da classe base) chamará os métodos de criação abaixo.
+    }
 
     @Override
     protected JPanel criarPainelDeBotoes() {
@@ -67,15 +58,11 @@ public class PainelEventos extends PainelBase {
         listaDeEventos.addListSelectionListener(e -> {
             if (!e.getValueIsAdjusting()) {
                 Evento eventoSelecionado = listaDeEventos.getSelectedValue();
-                if (eventoSelecionado != null) {
-                    areaDescricao.setText(eventoSelecionado.getDescricao());
-                } else {
-                    areaDescricao.setText("");
-                }
+                areaDescricao.setText(eventoSelecionado != null ? eventoSelecionado.getDescricao() : "");
             }
         });
 
-        this.meusEventos = carregarEventosDeExemplo();
+        // MUDANÇA: Carrega os eventos reais do Orquestrador ao iniciar.
         popularListaEventos();
 
         JSplitPane painelDividido = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT,
@@ -91,21 +78,24 @@ public class PainelEventos extends PainelBase {
 
     private void popularListaEventos() {
         modeloListaEventos.clear();
-        for (Evento evento : this.meusEventos) {
+        // MUDANÇA: Busca a lista de eventos sempre do Orquestrador.
+        for (Evento evento : this.orquestrador.listarTodosEventos()) {
             modeloListaEventos.addElement(evento);
         }
     }
 
     private void adicionarNovoEvento() {
         Frame framePrincipal = (Frame) SwingUtilities.getWindowAncestor(this);
-        DialogoEvento dialogo = new DialogoEvento(framePrincipal);
+        // MUDANÇA: O diálogo também precisará do orquestrador se ele realizar alguma validação.
+        DialogoEvento dialogo = new DialogoEvento(framePrincipal, orquestrador);
         dialogo.setVisible(true);
 
         if (dialogo.foiSalvo()) {
-            Evento novoEvento = dialogo.getEvento();
-            this.meusEventos.add(novoEvento);
+            // MUDANÇA: O próprio diálogo já cadastrou o evento através do Orquestrador.
+            // Apenas precisamos atualizar a nossa lista para refletir a mudança.
             popularListaEventos();
-            listaDeEventos.setSelectedValue(novoEvento, true);
+            // Opcional: selecionar o novo item, mas requer que o diálogo o retorne.
+            // listaDeEventos.setSelectedValue(dialogo.getEvento(), true);
         }
     }
 
@@ -117,12 +107,13 @@ public class PainelEventos extends PainelBase {
         }
 
         Frame framePrincipal = (Frame) SwingUtilities.getWindowAncestor(this);
-        DialogoEvento dialogo = new DialogoEvento(framePrincipal, eventoSelecionado);
+        // MUDANÇA: O diálogo de edição precisa do Orquestrador para salvar as alterações.
+        DialogoEvento dialogo = new DialogoEvento(framePrincipal, orquestrador, eventoSelecionado);
         dialogo.setVisible(true);
 
         if (dialogo.foiSalvo()) {
-            listaDeEventos.repaint();
-            areaDescricao.setText(eventoSelecionado.getDescricao());
+            // MUDANÇA: O diálogo salvou a edição, então só precisamos atualizar a exibição.
+            popularListaEventos();
         }
     }
 
@@ -138,16 +129,10 @@ public class PainelEventos extends PainelBase {
                 "Confirmar Exclusão", JOptionPane.YES_NO_OPTION);
 
         if (confirmacao == JOptionPane.YES_OPTION) {
-            this.meusEventos.remove(eventoSelecionado);
+            // MUDANÇA: Delega a exclusão para o Orquestrador.
+            this.orquestrador.excluirEvento(eventoSelecionado);
+            // MUDANÇA: Atualiza a lista após a exclusão.
             popularListaEventos();
         }
-    }
-
-    private List<Evento> carregarEventosDeExemplo() {
-        List<Evento> eventos = new ArrayList<>();
-        eventos.add(new Evento("Reunião de equipe", "Reunião semanal para alinhamento de sprints.", LocalDate.now(), LocalDate.now().plusDays(2)));
-        eventos.add(new Evento("Aniversário do projeto", "Comemoração de 1 ano do projeto ToDoList.", LocalDate.now(), LocalDate.now().plusDays(15)));
-        eventos.add(new Evento("Workshop de Swing", "Workshop avançado sobre componentes Swing e boas práticas.", LocalDate.now(), LocalDate.now().plusMonths(1)));
-        return eventos;
     }
 }
