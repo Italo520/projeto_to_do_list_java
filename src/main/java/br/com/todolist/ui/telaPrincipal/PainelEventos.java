@@ -20,7 +20,7 @@ public class PainelEventos extends PainelBase {
     // MUDANÇA: Construtor agora recebe o Orquestrador (Injeção de Dependência).
     public PainelEventos(Orquestrador orquestrador) {
         this.orquestrador = orquestrador;
-        // O método buildPanel() (da classe base) chamará os métodos de criação abaixo.
+        inicializarLayout();
     }
 
     @Override

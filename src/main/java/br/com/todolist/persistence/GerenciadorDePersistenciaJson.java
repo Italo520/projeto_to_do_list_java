@@ -1,4 +1,5 @@
 package br.com.todolist.persistence;
+import java.lang.reflect.Type;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonSyntaxException;
@@ -25,14 +26,16 @@ public class GerenciadorDePersistenciaJson {
         }
     }
 
-    public Object carregar(Class<?> tipo) {
+    public <T> T carregar(Type tipoDeDados) {
+    // A sua lógica de verificação do arquivo está ótima, vamos mantê-la.
         if (!arquivo.exists() || arquivo.length() == 0) {
-            System.out.println("Arquivo de dados não encontrado ou vazio. Iniciando com novos dados.");
+        // System.out.println("Arquivo de dados não encontrado ou vazio. Iniciando com novos dados.");
             return null;
         }
 
         try (FileReader reader = new FileReader(arquivo)) {
-            return gson.fromJson(reader, tipo);
+        // A única mudança na lógica é aqui: passamos 'tipoDeDados' para o Gson.
+            return gson.fromJson(reader, tipoDeDados);
         } catch (IOException e) {
             System.err.println("Erro ao carregar o arquivo JSON: " + e.getMessage());
             return null;
@@ -41,4 +44,5 @@ public class GerenciadorDePersistenciaJson {
             return null;
         }
     }
+
 }

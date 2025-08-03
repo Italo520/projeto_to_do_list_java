@@ -22,7 +22,7 @@ public class PainelTarefas extends PainelBase {
     public PainelTarefas(Orquestrador orquestrador) {
         super();
         this.orquestrador = orquestrador;
-        // O método 'construir()' é chamado pelo construtor de PainelBase
+        super.inicializarLayout();
     }
 
     @Override

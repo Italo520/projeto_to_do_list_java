@@ -2,6 +2,8 @@ package br.com.todolist.ui.telasusuario;
 
 import br.com.todolist.models.Usuario;
 import br.com.todolist.service.GerenteDeUsuarios;
+import br.com.todolist.ui.telaPrincipal.TelaPrincipal;
+
 import javax.swing.*;
 import java.awt.*;
 
@@ -71,12 +73,12 @@ public class TelaLogin extends JFrame {
         botaoEntrar.addActionListener(e -> realizarLogin());
 
         botaoCriarConta.addActionListener(e -> {
-            // 2. CORREÇÃO CRÍTICA: Passando a instância existente do gerente para a tela de cadastro.
+
             TelaCadastro telaCadastro = new TelaCadastro(this, this.gerenteDeUsuarios);
             telaCadastro.setVisible(true);
         });
 
-        // Adiciona a mesma ação ao pressionar Enter no campo de senha
+
         campoSenha.addActionListener(e -> realizarLogin());
     }
 
@@ -92,15 +94,10 @@ public class TelaLogin extends JFrame {
         Usuario usuarioAutenticado = gerenteDeUsuarios.autenticarUsuario(email, senha);
 
         if (usuarioAutenticado != null) {
-            // Sucesso: Fecha a tela de login
-            dispose();
-            // Cria e exibe a tela principal, passando o usuário válido
-            // Lembre-se que a TelaPrincipal também precisará do Orquestrador
-            // A criação do Orquestrador deve ser feita aqui.
-            JOptionPane.showMessageDialog(null, "Login bem-sucedido! Bem-vindo(a), " + usuarioAutenticado.getNome() + ".");
-            // new TelaPrincipal(usuarioAutenticado).setVisible(true); // Esta linha está correta no conceito
+        TelaPrincipal telaPrincipal = new TelaPrincipal(usuarioAutenticado);
+        this.dispose();
+        telaPrincipal.setVisible(true);
         } else {
-            // Falha: Mostra uma mensagem de erro
             JOptionPane.showMessageDialog(this, "Email ou senha incorretos.", "Erro de Login", JOptionPane.ERROR_MESSAGE);
         }
     }
