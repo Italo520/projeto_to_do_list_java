@@ -1,11 +1,15 @@
-package br.com.todolist; 
+package br.com.todolist;
 
-import br.com.todolist.ui.telaPrincipal.TelaPrincipal; 
+// A linha mais importante para resolver o erro:
+import br.com.todolist.ui.telasusuario.TelaLogin;
 
-
+/**
+ * Ponto de entrada principal da aplicação.
+ */
 public class App {
     public static void main(String[] args) {
-        new TelaPrincipal().setVisible(true);;
+        // A aplicação agora inicia pela tela de login.
+        // A linha abaixo (provavelmente a linha 9) é a que causa o erro se o import faltar.
+        new TelaLogin().setVisible(true);
     }
-    
 }
