@@ -15,4 +15,10 @@
 .DS_Store
 Thumbs.db
 
-/arquivos/
+# Pasta de arquivos
+arquivos/
+
+# Arquivos de front-end
+index.html
+script.js
+styles.css

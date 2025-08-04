@@ -17,11 +17,12 @@
   </properties>
 
   <dependencies>
+    <!-- https://mvnrepository.com/artifact/junit/junit -->
     <dependency>
-      <groupId>junit</groupId>
-      <artifactId>junit</artifactId>
-      <version>4.11</version>
-      <scope>test</scope>
+        <groupId>junit</groupId>
+        <artifactId>junit</artifactId>
+        <version>4.13.2</version>
+        <scope>test</scope>
     </dependency>
 
     <dependency>
@@ -36,9 +37,9 @@
     </dependency>
 
     <dependency>
-        <groupId>com.thoughtworks.xstream</groupId>
-        <artifactId>xstream</artifactId>
-        <version>1.4.20</version>
+      <groupId>com.thoughtworks.xstream</groupId>
+      <artifactId>xstream</artifactId>
+      <version>1.4.21</version>
     </dependency>
 
     <dependency>
@@ -55,9 +56,20 @@
     </dependency>
 
     <dependency>
-        <groupId>org.apache.poi</groupId>
-        <artifactId>poi-ooxml</artifactId>
-        <version>5.2.3</version>
+      <groupId>org.apache.poi</groupId>
+      <artifactId>poi-ooxml</artifactId>
+      <version>5.2.5</version>
+    </dependency>
+
+    <dependency>
+        <groupId>org.bouncycastle</groupId>
+        <artifactId>bcprov-jdk15on</artifactId>
+        <version>1.70</version>
+    </dependency>
+    <dependency>
+        <groupId>org.apache.commons</groupId>
+        <artifactId>commons-compress</artifactId>
+        <version>1.26.0</version>
     </dependency>
 
     <dependency>
@@ -67,6 +79,13 @@
     </dependency>
 
   </dependencies>
+  <repositories>
+    <repository>
+        <id>bouncycastle</id>
+        <name>Bouncy Castle Repository</name>
+        <url>https://repo1.maven.org/maven2/</url>
+    </repository>
+</repositories>
   <build>
     <pluginManagement>
       <plugins>
@@ -111,12 +130,12 @@
     
     <plugins>
         <plugin>
-            <groupId>org.codehaus.mojo</groupId>
-            <artifactId>exec-maven-plugin</artifactId>
-            <version>3.1.0</version>
-            <configuration>
-                <mainClass>br.com.todolist.App</mainClass>
-            </configuration>
+          <groupId>org.codehaus.mojo</groupId>
+          <artifactId>exec-maven-plugin</artifactId>
+          <version>3.1.0</version>
+          <configuration>
+            <mainClass>br.com.todolist.Main</mainClass>
+          </configuration>
         </plugin>
     </plugins>
   </build>
