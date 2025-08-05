@@ -1,34 +1,36 @@
 package br.com.todolist.models;
 
-import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
+import java.time.LocalDate;
+import java.util.stream.Collectors;
 
 public class Tarefa extends Itens {
 
-    private double percentual;
     private LocalDate dataConclusao;
     private int prioridade;
     private List<Subtarefa> subtarefas;
 
+    public Tarefa() {
+    }
+
     public Tarefa(String titulo, String descricao, String criado_por, LocalDate deadline, int prioridade) {
         super(titulo, descricao, "Tarefa", criado_por, deadline);
         this.prioridade = prioridade;
-        this.percentual = 0.0;
         this.dataConclusao = null;
         this.subtarefas = new ArrayList<>();
     }
 
-    public Tarefa() {
-        super();
-    }
-
     public double getPercentual() {
-        return percentual;
-    }
+        if (subtarefas.isEmpty()) {
+            return dataConclusao != null ? 100.0 : 0.0;
+        }
 
-    public void setPercentual(double percentual) {
-        this.percentual = percentual;
+        long subtarefasConcluidas = this.subtarefas.stream()
+                .filter(Subtarefa::isStatus)
+                .count();
+
+        return ((double) subtarefasConcluidas / subtarefas.size()) * 100;
     }
 
     public LocalDate getDataConclusao() {
@@ -64,6 +66,6 @@ public class Tarefa extends Itens {
     }
 
     public String toString() {
-        return getTitulo();
+        return getTitulo() + " (Conclusão da Tarefa: " + (int) getPercentual() + "%)";
     }
 }

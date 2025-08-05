@@ -26,12 +26,12 @@ public class Orquestrador {
     public void cadastrarTarefa(String titulo, String descricao, LocalDate deadline, int prioridade) {
         Tarefa novaTarefa = new Tarefa(titulo, descricao, this.emailUsuario, deadline, prioridade);
         this.gerenteDeTarefas.cadastrarTarefa(novaTarefa);
-        String assunto = "Notificação: Nova Tarefa Criada";
-        String corpo = "Uma nova tarefa foi criada:\n\n"
-                + "Título: " + titulo + "\n"
-                + "Descrição: " + descricao + "\n"
-                + "Prazo: " + deadline + "\n";
-        mensageiro.enviarEmail(this.emailUsuario, assunto, corpo);
+        // String assunto = "Notificação: Nova Tarefa Criada";
+        // String corpo = "Uma nova tarefa foi criada:\n\n"
+        // + "Título: " + titulo + "\n"
+        // + "Descrição: " + descricao + "\n"
+        // + "Prazo: " + deadline + "\n";
+        // mensageiro.enviarEmail(this.emailUsuario, assunto, corpo);
     }
 
     public List<Tarefa> listarTodasTarefas() {
@@ -68,14 +68,14 @@ public class Orquestrador {
     public boolean cadastrarEvento(String titulo, String descricao, LocalDate deadline) {
         boolean sucesso = this.gerenteDeEventos
                 .cadastrarEvento(new Evento(titulo, descricao, this.emailUsuario, deadline));
-        if (sucesso) {
-            String assunto = "Notificação: Novo Evento Criado";
-            String corpo = "Um novo evento foi criado:\n\n"
-                    + "Título: " + titulo + "\n"
-                    + "Descrição: " + descricao + "\n"
-                    + "Prazo: " + deadline + "\n";
-            mensageiro.enviarEmail(this.emailUsuario, assunto, corpo);
-        }
+        // if (sucesso) {
+        // String assunto = "Notificação: Novo Evento Criado";
+        // String corpo = "Um novo evento foi criado:\n\n"
+        // + "Título: " + titulo + "\n"
+        // + "Descrição: " + descricao + "\n"
+        // + "Prazo: " + deadline + "\n";
+        // mensageiro.enviarEmail(this.emailUsuario, assunto, corpo);
+        // }
         return sucesso;
     }
 
