@@ -3,10 +3,12 @@ package br.com.todolist.ui.telaPrincipal;
 
 import java.awt.BorderLayout;
 import java.time.LocalDate;
+import java.time.YearMonth; // Importar YearMonth
 import java.util.List;
 import javax.swing.JFrame;
 import javax.swing.JTabbedPane;
 import javax.swing.JOptionPane;
+import br.com.todolist.models.Evento; // Importar Evento
 import br.com.todolist.models.Tarefa;
 import br.com.todolist.models.Usuario;
 import br.com.todolist.service.Orquestrador;
@@ -25,6 +27,43 @@ public class TelaPrincipal extends JFrame {
         montarLayout();
     }
 
+    // --- MÉTODOS DE CONTROLE PARA EVENTOS ---
+
+    /**
+     * Filtra e exibe os eventos de um dia específico.
+     */
+    public void listarEventosPorDia(LocalDate dia) {
+        List<Evento> eventosFiltrados = orquestrador.listarEventosPorDia(dia);
+        painelComAbas.setSelectedComponent(painelEventos);
+        painelEventos.exibirEventos(eventosFiltrados);
+
+        if (eventosFiltrados.isEmpty()) {
+            JOptionPane.showMessageDialog(this, "Nenhum evento encontrado para este dia.", "Informação", JOptionPane.INFORMATION_MESSAGE);
+        }
+    }
+
+    /**
+     * Filtra e exibe os eventos de um mês/ano específico.
+     */
+    public void listarEventosPorMes(YearMonth mes) {
+        List<Evento> eventosFiltrados = orquestrador.listarEventosPorMes(mes);
+        painelComAbas.setSelectedComponent(painelEventos);
+        painelEventos.exibirEventos(eventosFiltrados);
+
+        if (eventosFiltrados.isEmpty()) {
+            JOptionPane.showMessageDialog(this, "Nenhum evento encontrado para este mês.", "Informação", JOptionPane.INFORMATION_MESSAGE);
+        }
+    }
+    
+    /**
+     * Remove os filtros e mostra todos os eventos.
+     */
+    public void mostrarTodosOsEventos() {
+        painelComAbas.setSelectedComponent(painelEventos);
+        painelEventos.exibirTodosOsEventos();
+    }
+    
+    // ... (O restante da classe TelaPrincipal permanece o mesmo)
     private void configurarJanela() {
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setSize(800, 600);
@@ -32,7 +71,6 @@ public class TelaPrincipal extends JFrame {
     }
 
     private void montarLayout() {
-        // CORREÇÃO: Passando o orquestrador para a BarraFerramentas, como ela espera.
         setJMenuBar(BarraFerramentas.criarBarraFerramentas(this, this.orquestrador));
         criarPaineis();
         setLayout(new BorderLayout());
@@ -47,17 +85,9 @@ public class TelaPrincipal extends JFrame {
         painelComAbas.addTab("Eventos", null, this.painelEventos, "Gerenciador de Eventos");
     }
 
-    // --- MÉTODOS PÚBLICOS PARA SEREM CHAMADOS PELA BARRA DE FERRAMENTAS ---
-
-    /**
-     * PADRONIZADO: Busca tarefas para um dia específico e comanda o painel para exibi-las.
-     * Corresponde ao item de menu "Listar Tarefas por Dia".
-     */
     public void listarTarefasPorDia(LocalDate dia) {
         List<Tarefa> tarefasFiltradas = orquestrador.listarTarefasPorDia(dia);
-        painelComAbas.setSelectedComponent(painelTarefas); // Garante que a aba de tarefas esteja visível
-
-        // Chamando o método centralizado do painel
+        painelComAbas.setSelectedComponent(painelTarefas);
         painelTarefas.exibirTarefas(tarefasFiltradas);
         
         if (tarefasFiltradas.isEmpty()) {
@@ -65,14 +95,8 @@ public class TelaPrincipal extends JFrame {
         }
     }
 
-    /**
-     * PADRONIZADO: Comanda o PainelTarefas a remover os filtros e mostrar todos os itens.
-     * Corresponde ao item de menu "Mostrar Todas as Tarefas".
-     */
     public void mostrarTodasAsTarefas() {
-        painelComAbas.setSelectedComponent(painelTarefas); // Garante que a aba de tarefas esteja visível
-        
-        // Chamando o método do painel para recarregar tudo
+        painelComAbas.setSelectedComponent(painelTarefas);
         painelTarefas.exibirTodasAsTarefas();
     }
 }
