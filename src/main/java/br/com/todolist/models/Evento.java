@@ -1,4 +1,5 @@
 package br.com.todolist.models;
+
 import java.time.LocalDate;
 
 public class Evento extends Itens {
@@ -8,7 +9,7 @@ public class Evento extends Itens {
     }
 
     public String toString() {
-        return "Evento [titulo=" + getTitulo() + ", deadline=" + getDeadline() + "]";
+        return "Evento: " + getTitulo();
     }
 
     public String getTitulo() {
@@ -43,6 +44,4 @@ public class Evento extends Itens {
         super.setDeadLine(deadline);
     }
 
-    
 }
-
