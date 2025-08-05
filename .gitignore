@@ -22,3 +22,13 @@ arquivos/
 index.html
 script.js
 styles.css
+qodana.yaml
+
+# Arquivos de build
+build/
+*.jar
+*.class
+
+# Arquivos de testes
+test/
+*.test
