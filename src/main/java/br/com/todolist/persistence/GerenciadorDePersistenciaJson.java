@@ -1,7 +1,6 @@
 // Em: src/main/java/br/com/todolist/persistence/GerenciadorDePersistenciaJson.java
 package br.com.todolist.persistence;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
@@ -10,7 +9,6 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.lang.reflect.Type;
-import java.util.List;
 
 public class GerenciadorDePersistenciaJson {
 
@@ -33,8 +31,6 @@ public class GerenciadorDePersistenciaJson {
         }
     }
 
-    // CORREÇÃO: O método carregar foi alterado para aceitar um Type novamente,
-    // o que é necessário para desserializar listas genéricas corretamente.
     public <T> T carregar(Type tipoDeDados) {
         if (!arquivo.exists() || arquivo.length() == 0) {
             return null;
