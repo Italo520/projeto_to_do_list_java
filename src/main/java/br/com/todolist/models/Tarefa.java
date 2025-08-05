@@ -21,7 +21,7 @@ public class Tarefa extends Itens {
         this.subtarefas = new ArrayList<>();
     }
 
-    public double getPercentual() {
+    public double obterPercentual() {
         if (subtarefas.isEmpty()) {
             return dataConclusao != null ? 100.0 : 0.0;
         }
@@ -66,6 +66,6 @@ public class Tarefa extends Itens {
     }
 
     public String toString() {
-        return getTitulo() + " (Conclusão da Tarefa: " + (int) getPercentual() + "%)";
+        return getTitulo() + " (Conclusão da Tarefa: " + (int) obterPercentual() + "%)";
     }
 }
