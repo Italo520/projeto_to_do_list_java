@@ -1,27 +1,28 @@
 package br.com.todolist.service;
+
 import br.com.todolist.models.Evento;
 import br.com.todolist.models.Tarefa;
-import br.com.todolist.models.Usuario;
 import br.com.todolist.persistence.GerenciadorDePersistenciaJson;
 import java.util.ArrayList;
 import java.util.List;
 
 public class GerenteDeDadosDoUsuario {
 
+    private static final String ARQUIVO_DADOS = "arquivos/dados_globais.json";
     private final GerenciadorDePersistenciaJson persistencia;
     private List<Tarefa> tarefas;
     private List<Evento> eventos;
 
-    public GerenteDeDadosDoUsuario(Usuario usuario) {
-        String nomeArquivo = "arquivos/" + usuario.getEmail().replace("@", "_").replace(".", "_") + "_dados.json";
-        this.persistencia = new GerenciadorDePersistenciaJson(nomeArquivo);
+    public GerenteDeDadosDoUsuario() {
+        this.persistencia = new GerenciadorDePersistenciaJson(ARQUIVO_DADOS);
         carregarDados();
     }
+
     private void carregarDados() {
-        Object[] dados = (Object[]) persistencia.carregar(Object[].class);
-        if (dados != null && dados.length == 2) {
-            this.tarefas = (List<Tarefa>) dados[0];
-            this.eventos = (List<Evento>) dados[1];
+        DadosUsuario dados = (DadosUsuario) persistencia.carregar(DadosUsuario.class);
+        if (dados != null) {
+            this.tarefas = dados.getTarefas() != null ? dados.getTarefas() : new ArrayList<>();
+            this.eventos = dados.getEventos() != null ? dados.getEventos() : new ArrayList<>();
         } else {
             this.tarefas = new ArrayList<>();
             this.eventos = new ArrayList<>();
@@ -29,10 +30,10 @@ public class GerenteDeDadosDoUsuario {
     }
 
     public void salvarDados() {
-        Object[] dadosParaSalvar = {tarefas, eventos};
+        DadosUsuario dadosParaSalvar = new DadosUsuario(tarefas, eventos);
         persistencia.salvar(dadosParaSalvar);
     }
-    
+
     public List<Tarefa> getTarefas() {
         return tarefas;
     }

@@ -9,8 +9,6 @@ import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.List;
 import org.mindrot.jbcrypt.BCrypt;
-
-// Importe a classe TypeReference do Jackson para obter o tipo genérico
 import com.fasterxml.jackson.core.type.TypeReference;
 
 public class GerenteDeUsuarios {
@@ -36,10 +34,7 @@ public class GerenteDeUsuarios {
         }
     }
 
-    // Método corrigido para usar a abordagem do Jackson para tipos genéricos
     private List<Usuario> carregarUsuarios() {
-        // Usa a classe TypeReference do Jackson, que é a forma correta de obter
-        // o tipo genérico da lista para a desserialização.
         Type tipoListaDeUsuarios = new TypeReference<List<Usuario>>() {
         }.getType();
         List<Usuario> lista = persistencia.carregar(tipoListaDeUsuarios);

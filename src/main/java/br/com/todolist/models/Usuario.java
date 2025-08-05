@@ -1,14 +1,10 @@
-// Em: src/main/java/br/com/todolist/models/Usuario.java
 package br.com.todolist.models;
-
-import org.mindrot.jbcrypt.BCrypt;
 
 public class Usuario {
     private String nome;
     private String email;
     private String password;
 
-    // Construtor vazio para a desserialização do Jackson
     public Usuario() {
     }
 
@@ -38,7 +34,6 @@ public class Usuario {
         return password;
     }
 
-    // CORREÇÃO: O setter agora apenas define o valor, sem hashear novamente.
     public void setPassword(String password) {
         this.password = password;
     }

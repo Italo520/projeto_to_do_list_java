@@ -54,26 +54,44 @@ public class DialogoEvento extends JDialog {
         gbc.insets = new Insets(5, 5, 5, 5);
         gbc.fill = GridBagConstraints.HORIZONTAL;
 
-        gbc.gridx = 0; gbc.gridy = 0; add(new JLabel("Título:"), gbc);
-        gbc.gridx = 1; gbc.gridy = 0; gbc.gridwidth = 2;
-        campoTitulo = new JTextField(25); add(campoTitulo, gbc);
+        gbc.gridx = 0;
+        gbc.gridy = 0;
+        add(new JLabel("Título:"), gbc);
+        gbc.gridx = 1;
+        gbc.gridy = 0;
+        gbc.gridwidth = 2;
+        campoTitulo = new JTextField(25);
+        add(campoTitulo, gbc);
 
-        gbc.gridx = 0; gbc.gridy = 1; add(new JLabel("Descrição:"), gbc);
-        gbc.gridx = 1; gbc.gridy = 1; gbc.gridwidth = 2;
-        campoDescricao = new JTextField(25); add(campoDescricao, gbc);
+        gbc.gridx = 0;
+        gbc.gridy = 1;
+        add(new JLabel("Descrição:"), gbc);
+        gbc.gridx = 1;
+        gbc.gridy = 1;
+        gbc.gridwidth = 2;
+        campoDescricao = new JTextField(25);
+        add(campoDescricao, gbc);
 
-        // O label foi alterado para refletir o conceito de 'Deadline'
-        gbc.gridx = 0; gbc.gridy = 2; gbc.gridwidth = 1; add(new JLabel("Deadline (dd/MM/yyyy):"), gbc);
-        gbc.gridx = 1; gbc.gridy = 2; gbc.gridwidth = 2;
-        campoData = new JTextField(10); add(campoData, gbc);
+        gbc.gridx = 0;
+        gbc.gridy = 2;
+        gbc.gridwidth = 1;
+        add(new JLabel("Deadline (dd/MM/yyyy):"), gbc);
+        gbc.gridx = 1;
+        gbc.gridy = 2;
+        gbc.gridwidth = 2;
+        campoData = new JTextField(10);
+        add(campoData, gbc);
 
         JPanel painelBotoes = new JPanel(new FlowLayout(FlowLayout.CENTER));
         botaoSalvar = new JButton("Salvar");
         botaoCancelar = new JButton("Cancelar");
         painelBotoes.add(botaoSalvar);
         painelBotoes.add(botaoCancelar);
-        
-        gbc.gridx = 0; gbc.gridy = 3; gbc.gridwidth = 3; gbc.fill = GridBagConstraints.NONE;
+
+        gbc.gridx = 0;
+        gbc.gridy = 3;
+        gbc.gridwidth = 3;
+        gbc.fill = GridBagConstraints.NONE;
         add(painelBotoes, gbc);
     }
 
@@ -81,7 +99,6 @@ public class DialogoEvento extends JDialog {
         if (evento != null) {
             campoTitulo.setText(evento.getTitulo());
             campoDescricao.setText(evento.getDescricao());
-            // CORREÇÃO: Utilizando getDeadline() ao invés de getDataEvento()
             campoData.setText(evento.getDeadline().format(formatadorDeData));
         }
     }
@@ -98,40 +115,43 @@ public class DialogoEvento extends JDialog {
 
         String titulo = campoTitulo.getText();
         String descricao = campoDescricao.getText();
-        // A variável agora se chama 'deadline' para maior clareza
         LocalDate deadline = LocalDate.parse(campoData.getText(), formatadorDeData);
 
         try {
             if (this.evento == null) {
-                // A variável 'deadline' é passada para o construtor e para o método do orquestrador
-                Evento novoEvento = new Evento(titulo, descricao, deadline);
-                boolean sucesso = orquestrador.cadastrarEvento(novoEvento);
+                // CORREÇÃO: Chama o novo método do orquestrador com os parâmetros
+                boolean sucesso = orquestrador.cadastrarEvento(titulo, descricao, deadline);
                 if (!sucesso) {
-                     JOptionPane.showMessageDialog(this, "Não foi possível cadastrar o evento.\nVerifique se já não existe um evento com o mesmo título.", "Erro ao Cadastrar", JOptionPane.WARNING_MESSAGE);
-                     return;
+                    JOptionPane.showMessageDialog(this,
+                            "Não foi possível cadastrar o evento.\nVerifique se já não existe um evento com a mesma data para o seu usuário.",
+                            "Erro ao Cadastrar", JOptionPane.WARNING_MESSAGE);
+                    return;
                 }
             } else {
                 orquestrador.editarEvento(this.evento, titulo, descricao, deadline);
             }
-            
+
             this.salvo = true;
             dispose();
 
         } catch (Exception e) {
-            JOptionPane.showMessageDialog(this, "Ocorreu um erro ao salvar o evento:\n" + e.getMessage(), "Erro", JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(this, "Ocorreu um erro ao salvar o evento:\n" + e.getMessage(), "Erro",
+                    JOptionPane.ERROR_MESSAGE);
             e.printStackTrace();
         }
     }
 
     private boolean validarCampos() {
         if (campoTitulo.getText().trim().isEmpty()) {
-            JOptionPane.showMessageDialog(this, "O campo 'Título' é obrigatório.", "Erro de Validação", JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(this, "O campo 'Título' é obrigatório.", "Erro de Validação",
+                    JOptionPane.ERROR_MESSAGE);
             return false;
         }
         try {
             LocalDate.parse(campoData.getText(), formatadorDeData);
         } catch (DateTimeParseException e) {
-            JOptionPane.showMessageDialog(this, "O formato da data é inválido. Use dd/MM/yyyy.", "Erro de Validação", JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(this, "O formato da data é inválido. Use dd/MM/yyyy.", "Erro de Validação",
+                    JOptionPane.ERROR_MESSAGE);
             return false;
         }
         return true;
