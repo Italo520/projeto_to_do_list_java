@@ -5,7 +5,6 @@ public class Subtarefa {
     private String titulo;
     private boolean status;
 
-    // Construtor padrão necessário para o Jackson
     public Subtarefa() {
     }
 
@@ -30,12 +29,10 @@ public class Subtarefa {
         }
     }
 
-    // Getter para o status, necessário para a serialização do Jackson
     public boolean isStatus() {
         return status;
     }
 
-    // Setter para o status, necessário para a desserialização do Jackson
     public void setStatus(boolean status) {
         this.status = status;
     }
