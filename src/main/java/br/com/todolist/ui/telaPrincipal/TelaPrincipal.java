@@ -6,10 +6,10 @@ import java.time.LocalDate;
 import java.util.List;
 import javax.swing.JFrame;
 import javax.swing.JTabbedPane;
+import javax.swing.JOptionPane;
 import br.com.todolist.models.Tarefa;
 import br.com.todolist.models.Usuario;
 import br.com.todolist.service.Orquestrador;
-import br.com.todolist.ui.TelasDialogo.PadraoDialogo;
 
 public class TelaPrincipal extends JFrame {
 
@@ -32,6 +32,7 @@ public class TelaPrincipal extends JFrame {
     }
 
     private void montarLayout() {
+        // CORREÇÃO: Passando o orquestrador para a BarraFerramentas, como ela espera.
         setJMenuBar(BarraFerramentas.criarBarraFerramentas(this, this.orquestrador));
         criarPaineis();
         setLayout(new BorderLayout());
@@ -46,32 +47,32 @@ public class TelaPrincipal extends JFrame {
         painelComAbas.addTab("Eventos", null, this.painelEventos, "Gerenciador de Eventos");
     }
 
-    // --- MÉTODOS PÚBLICOS PARA COMUNICAÇÃO (A "PONTE") ---
+    // --- MÉTODOS PÚBLICOS PARA SEREM CHAMADOS PELA BARRA DE FERRAMENTAS ---
 
     /**
-     * CORREÇÃO: Este método agora recebe a data, busca os dados e comanda o painel.
+     * PADRONIZADO: Busca tarefas para um dia específico e comanda o painel para exibi-las.
+     * Corresponde ao item de menu "Listar Tarefas por Dia".
      */
-    public void filtrarTarefasDaTelaPrincipal(LocalDate dia) {
-        // 1. A TelaPrincipal chama o orquestrador para buscar os dados
+    public void listarTarefasPorDia(LocalDate dia) {
         List<Tarefa> tarefasFiltradas = orquestrador.listarTarefasPorDia(dia);
+        painelComAbas.setSelectedComponent(painelTarefas); // Garante que a aba de tarefas esteja visível
 
-        // 2. Garante que a aba de tarefas esteja visível
-        painelComAbas.setSelectedComponent(painelTarefas);
+        // Chamando o método centralizado do painel
+        painelTarefas.exibirTarefas(tarefasFiltradas);
         
-        // 3. Comanda o PainelTarefas a se atualizar com a lista filtrada
-        painelTarefas.exibirListaFiltrada(tarefasFiltradas);
-        
-        // 4. Mostra um aviso se nada for encontrado
         if (tarefasFiltradas.isEmpty()) {
-            PadraoDialogo.mostrarMensagemInfo(this, "Nenhuma tarefa encontrada para o dia selecionado.");
+            JOptionPane.showMessageDialog(this, "Nenhuma tarefa encontrada para o dia selecionado.", "Informação", JOptionPane.INFORMATION_MESSAGE);
         }
     }
 
     /**
-     * Comanda o PainelTarefas a remover os filtros e mostrar todos os itens.
+     * PADRONIZADO: Comanda o PainelTarefas a remover os filtros e mostrar todos os itens.
+     * Corresponde ao item de menu "Mostrar Todas as Tarefas".
      */
     public void mostrarTodasAsTarefas() {
-        painelComAbas.setSelectedComponent(painelTarefas);
-        painelTarefas.popularComTodasAsTarefas();
+        painelComAbas.setSelectedComponent(painelTarefas); // Garante que a aba de tarefas esteja visível
+        
+        // Chamando o método do painel para recarregar tudo
+        painelTarefas.exibirTodasAsTarefas();
     }
 }

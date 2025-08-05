@@ -1,3 +1,4 @@
+// Em: src/main/java/br/com/todolist/service/Orquestrador.java
 package br.com.todolist.service;
 
 import br.com.todolist.models.Evento;
@@ -8,29 +9,41 @@ import java.time.LocalDate;
 import java.time.YearMonth;
 import java.util.List;
 
+/**
+ * Orquestrador central da lógica de negócios.
+ * Esta versão centraliza a criação de suas próprias dependências,
+ * simplificando a inicialização pela camada de UI.
+ */
 public class Orquestrador {
 
     private final GerenteDeTarefas gerenteDeTarefas;
     private final GerenteDeEventos gerenteDeEventos;
-    private final String emailUsuario;
     private final Mensageiro mensageiro;
+    private final String emailUsuario;
 
-    public Orquestrador(Usuario usuario) {
+    /**
+     * Construtor que inicializa o Orquestrador e todas as suas dependências.
+     * @param usuarioLogado O usuário que está realizando as operações.
+     */
+    public Orquestrador(Usuario usuarioLogado) {
+        // O Orquestrador agora cria e gerencia suas próprias dependências.
         GerenteDeDadosDoUsuario dadosDoUsuario = new GerenteDeDadosDoUsuario();
-        this.emailUsuario = usuario.getEmail();
+        this.emailUsuario = usuarioLogado.getEmail();
         this.gerenteDeTarefas = new GerenteDeTarefas(dadosDoUsuario, this.emailUsuario);
         this.gerenteDeEventos = new GerenteDeEventos(dadosDoUsuario, this.emailUsuario);
         this.mensageiro = new Mensageiro();
     }
 
+    // --- MÉTODOS DE GERENCIAMENTO DE TAREFAS ---
+
     public void cadastrarTarefa(String titulo, String descricao, LocalDate deadline, int prioridade) {
         Tarefa novaTarefa = new Tarefa(titulo, descricao, this.emailUsuario, deadline, prioridade);
         this.gerenteDeTarefas.cadastrarTarefa(novaTarefa);
+        
         // String assunto = "Notificação: Nova Tarefa Criada";
         // String corpo = "Uma nova tarefa foi criada:\n\n"
-        // + "Título: " + titulo + "\n"
-        // + "Descrição: " + descricao + "\n"
-        // + "Prazo: " + deadline + "\n";
+        //              + "Título: " + titulo + "\n"
+        //              + "Prazo: " + deadline + "\n";
         // mensageiro.enviarEmail(this.emailUsuario, assunto, corpo);
     }
 
@@ -45,8 +58,7 @@ public class Orquestrador {
         mensageiro.enviarEmail(this.emailUsuario, assunto, corpo);
     }
 
-    public void editarTarefa(Tarefa tarefaOriginal, String novoTitulo, String novaDescricao, LocalDate novoDeadline,
-            int novaPrioridade) {
+    public void editarTarefa(Tarefa tarefaOriginal, String novoTitulo, String novaDescricao, LocalDate novoDeadline, int novaPrioridade) {
         this.gerenteDeTarefas.editarTarefa(tarefaOriginal, novoTitulo, novaDescricao, novoDeadline, novaPrioridade);
         String assunto = "Notificação: Tarefa Editada";
         String corpo = "A tarefa '" + tarefaOriginal.getTitulo() + "' foi editada.";
@@ -65,20 +77,23 @@ public class Orquestrador {
         return this.gerenteDeTarefas.listarTarefasCriticas();
     }
 
-    public double calcularPercentualTarefa(Tarefa t){
-        return this.gerenteDeTarefas.obterPercentual(t);
+    public double obterPercentual(Tarefa tarefa) {
+        return this.gerenteDeTarefas.obterPercentual(tarefa);
     }
 
+
+    // --- MÉTODOS DE GERENCIAMENTO DE EVENTOS ---
+
     public boolean cadastrarEvento(String titulo, String descricao, LocalDate deadline) {
-        boolean sucesso = this.gerenteDeEventos
-                .cadastrarEvento(new Evento(titulo, descricao, this.emailUsuario, deadline));
+        Evento novoEvento = new Evento(titulo, descricao, this.emailUsuario, deadline);
+        boolean sucesso = this.gerenteDeEventos.cadastrarEvento(novoEvento);
+        
         // if (sucesso) {
-        // String assunto = "Notificação: Novo Evento Criado";
-        // String corpo = "Um novo evento foi criado:\n\n"
-        // + "Título: " + titulo + "\n"
-        // + "Descrição: " + descricao + "\n"
-        // + "Prazo: " + deadline + "\n";
-        // mensageiro.enviarEmail(this.emailUsuario, assunto, corpo);
+        //     String assunto = "Notificação: Novo Evento Criado";
+        //     String corpo = "Um novo evento foi criado:\n\n"
+        //                  + "Título: " + titulo + "\n"
+        //                  + "Prazo: " + deadline + "\n";
+        //     mensageiro.enviarEmail(this.emailUsuario, assunto, corpo);
         // }
         return sucesso;
     }

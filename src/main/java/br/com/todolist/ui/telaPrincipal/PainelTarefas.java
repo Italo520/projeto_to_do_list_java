@@ -5,12 +5,12 @@ import br.com.todolist.models.Subtarefa;
 import br.com.todolist.models.Tarefa;
 import br.com.todolist.service.Orquestrador;
 import br.com.todolist.ui.TelasDialogo.DialogoTarefa;
-import br.com.todolist.ui.TelasDialogo.PadraoDialogo;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.util.List;
-import java.util.Optional; // MUDANÇA: Import que faltava
 
 public class PainelTarefas extends PainelBase {
 
@@ -26,30 +26,34 @@ public class PainelTarefas extends PainelBase {
         super.inicializarLayout();
     }
 
-    // --- MÉTODOS PÚBLICOS PARA SEREM CONTROLADOS PELA TELA PRINCIPAL ---
-    public void exibirListaFiltrada(List<Tarefa> tarefas) {
+    // --- MÉTODOS PÚBLICOS PARA CONTROLE EXTERNO ---
+
+    /**
+     * MÉTODO CENTRALIZADO: Limpa a lista atual e exibe uma nova lista de tarefas.
+     * Este é o único método que a TelaPrincipal usará para atualizar a exibição.
+     * @param tarefas A lista de tarefas (filtrada ou completa) a ser exibida.
+     */
+    public void exibirTarefas(List<Tarefa> tarefas) {
         modeloListaTarefas.clear();
         if (tarefas != null) {
             tarefas.forEach(modeloListaTarefas::addElement);
         }
-        atualizarListaSubtarefas(null);
-    }
-    
-    public void popularComTodasAsTarefas() {
-        modeloListaTarefas.clear();
-        List<Tarefa> tarefas = orquestrador.listarTodasTarefas();
-        if (tarefas != null) {
-            tarefas.forEach(modeloListaTarefas::addElement);
-        }
+        // Limpa a seleção e as subtarefas
+        listaDeTarefas.clearSelection();
         atualizarListaSubtarefas(null);
     }
 
-    // --- O RESTO DA CLASSE COM AS CORREÇÕES NAS CHAMADAS DE DIÁLOGO ---
-    
-    // Método para obter a janela pai (JFrame) a partir do painel (JPanel)
-    private JFrame getFrame() {
-        return (JFrame) SwingUtilities.getWindowAncestor(this);
+    /**
+     * Carrega e exibe todas as tarefas do usuário.
+     * Chamado quando o painel é criado ou quando o filtro é limpo.
+     */
+    public void exibirTodasAsTarefas() {
+        List<Tarefa> todasAsTarefas = orquestrador.listarTodasTarefas();
+        exibirTarefas(todasAsTarefas);
     }
+
+
+    // --- MÉTODOS DE CONFIGURAÇÃO DA UI (INTERNOS) ---
 
     @Override
     protected JPanel criarPainelDeBotoes() {
@@ -69,10 +73,10 @@ public class PainelTarefas extends PainelBase {
 
     @Override
     protected JPanel criarPainelDeConteudo() {
+        // ... (o restante do método criarPainelDeConteudo permanece o mesmo)
         modeloListaTarefas = new DefaultListModel<>();
         listaDeTarefas = new JList<>(modeloListaTarefas);
         listaDeTarefas.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-        listaDeTarefas.setCellRenderer(new TarefaCellRenderer());
         listaDeTarefas.addListSelectionListener(e -> {
             if (!e.getValueIsAdjusting()) {
                 atualizarListaSubtarefas(listaDeTarefas.getSelectedValue());
@@ -85,8 +89,10 @@ public class PainelTarefas extends PainelBase {
         painelDireito.setBorder(BorderFactory.createTitledBorder("Subtarefas"));
         modeloListaSubtarefas = new DefaultListModel<>();
         listaDeSubtarefas = new JList<>(modeloListaSubtarefas);
+        listaDeSubtarefas.setCellRenderer(new SubtarefaCellRenderer());
+        adicionarListenerDeCliqueSubtarefa();
         JScrollPane scrollSubtarefas = new JScrollPane(listaDeSubtarefas);
-        
+
         JPanel painelBotoesSubtarefa = new JPanel(new FlowLayout(FlowLayout.CENTER));
         JButton botaoNovaSubtarefa = new JButton("Nova");
         JButton botaoEditarSubtarefa = new JButton("Editar");
@@ -97,65 +103,47 @@ public class PainelTarefas extends PainelBase {
         painelBotoesSubtarefa.add(botaoNovaSubtarefa);
         painelBotoesSubtarefa.add(botaoEditarSubtarefa);
         painelBotoesSubtarefa.add(botaoExcluirSubtarefa);
-        
+
         painelDireito.add(scrollSubtarefas, BorderLayout.CENTER);
         painelDireito.add(painelBotoesSubtarefa, BorderLayout.SOUTH);
 
         JSplitPane splitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, scrollTarefas, painelDireito);
         splitPane.setResizeWeight(0.5);
+
         JPanel painelConteudo = new JPanel(new BorderLayout());
         painelConteudo.add(splitPane, BorderLayout.CENTER);
-        popularComTodasAsTarefas();
+
+        // Ao iniciar o painel, exibe todas as tarefas por padrão.
+        exibirTodasAsTarefas();
         return painelConteudo;
     }
+    
+    // ... (o restante da classe com os métodos de ação dos botões permanece o mesmo)
+    // ... (adicionarNovaTarefa, editarTarefaSelecionada, etc.)
+    // ... (SubtarefaCellRenderer, etc.)
 
-    private void adicionarNovaTarefa() {
-        DialogoTarefa dialogo = new DialogoTarefa(getFrame(), orquestrador);
-        dialogo.setVisible(true);
-        if (dialogo.foiSalvo()) {
-            popularComTodasAsTarefas();
-        }
-    }
-
-    private void editarTarefaSelecionada() {
-        Tarefa tarefaSelecionada = listaDeTarefas.getSelectedValue();
-        if (tarefaSelecionada == null) {
-            PadraoDialogo.mostrarMensagemErro(getFrame(), "Por favor, selecione uma tarefa para editar.");
-            return;
-        }
-        DialogoTarefa dialogo = new DialogoTarefa(getFrame(), orquestrador, tarefaSelecionada);
-        dialogo.setVisible(true);
-        if (dialogo.foiSalvo()) {
-            popularComTodasAsTarefas();
-        }
-    }
-
-    private void excluirTarefaSelecionada() {
-        Tarefa tarefaSelecionada = listaDeTarefas.getSelectedValue();
-        if (tarefaSelecionada == null) {
-            PadraoDialogo.mostrarMensagemErro(getFrame(), "Por favor, selecione uma tarefa para excluir.");
-            return;
-        }
-        if (PadraoDialogo.confirmarAcao(getFrame(), "Confirmar Exclusão", "Tem certeza que deseja excluir a tarefa:\n" + tarefaSelecionada.getTitulo())) {
-            orquestrador.excluirTarefa(tarefaSelecionada);
-            popularComTodasAsTarefas();
-        }
-    }
-
-    private class TarefaCellRenderer extends DefaultListCellRenderer {
-        @Override
-        public Component getListCellRendererComponent(JList<?> list, Object value, int index, boolean isSelected, boolean cellHasFocus) {
-            super.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
-
-            if (value instanceof Tarefa) {
-                Tarefa tarefa = (Tarefa) value;
-                double percentual = orquestrador.calcularPercentualTarefa(tarefa);
-                setText(tarefa.getTitulo() + " (Conclusão: " + (int) percentual + "%)");
+    private void adicionarListenerDeCliqueSubtarefa() {
+        listaDeSubtarefas.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                int indexSubtarefa = listaDeSubtarefas.locationToIndex(e.getPoint());
+                if (indexSubtarefa != -1) {
+                    Tarefa tarefaPai = listaDeTarefas.getSelectedValue();
+                    Subtarefa subtarefa = modeloListaSubtarefas.getElementAt(indexSubtarefa);
+                    
+                    subtarefa.setStatus(!subtarefa.isStatus());
+                    orquestrador.atualizarTarefa(tarefaPai);
+                    
+                    // ATUALIZAÇÃO FORÇADA: Recarrega toda a lista de tarefas para refletir o progresso
+                    int selectedIndex = listaDeTarefas.getSelectedIndex();
+                    exibirTodasAsTarefas();
+                    listaDeTarefas.setSelectedIndex(selectedIndex); // Tenta manter a seleção
+                    
+                    listaDeSubtarefas.repaint();
+                }
             }
-            return this;
-        }
+        });
     }
-
 
     private void atualizarListaSubtarefas(Tarefa tarefa) {
         modeloListaSubtarefas.clear();
@@ -164,48 +152,95 @@ public class PainelTarefas extends PainelBase {
         }
     }
 
+    private void adicionarNovaTarefa() {
+        DialogoTarefa dialogo = new DialogoTarefa((Frame) SwingUtilities.getWindowAncestor(this), orquestrador);
+        dialogo.setVisible(true);
+        if (dialogo.foiSalvo()) {
+            exibirTodasAsTarefas();
+        }
+    }
+
+    private void editarTarefaSelecionada() {
+        Tarefa tarefaSelecionada = listaDeTarefas.getSelectedValue();
+        if (tarefaSelecionada == null) {
+            JOptionPane.showMessageDialog(this, "Por favor, selecione uma tarefa para editar.", "Nenhuma Tarefa Selecionada", JOptionPane.WARNING_MESSAGE);
+            return;
+        }
+        DialogoTarefa dialogo = new DialogoTarefa((Frame) SwingUtilities.getWindowAncestor(this), orquestrador, tarefaSelecionada);
+        dialogo.setVisible(true);
+        if (dialogo.foiSalvo()) {
+            exibirTodasAsTarefas();
+        }
+    }
+
+    private void excluirTarefaSelecionada() {
+        Tarefa tarefaSelecionada = listaDeTarefas.getSelectedValue();
+        if (tarefaSelecionada == null) {
+            JOptionPane.showMessageDialog(this, "Por favor, selecione uma tarefa para excluir.", "Nenhuma Tarefa Selecionada", JOptionPane.WARNING_MESSAGE);
+            return;
+        }
+        int resposta = JOptionPane.showConfirmDialog(this, "Tem certeza que deseja excluir a tarefa:\n" + tarefaSelecionada.getTitulo(), "Confirmar Exclusão", JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE);
+        if (resposta == JOptionPane.YES_OPTION) {
+            orquestrador.excluirTarefa(tarefaSelecionada);
+            exibirTodasAsTarefas();
+        }
+    }
+    
     private void adicionarNovaSubtarefa() {
         Tarefa tarefaPai = listaDeTarefas.getSelectedValue();
         if (tarefaPai == null) {
-            PadraoDialogo.mostrarMensagemErro(getFrame(), "Selecione uma tarefa principal para adicionar uma subtarefa.");
+            JOptionPane.showMessageDialog(this, "Selecione uma tarefa para adicionar uma subtarefa.", "Nenhuma Tarefa Selecionada", JOptionPane.WARNING_MESSAGE);
             return;
         }
-        Optional<String> descricao = PadraoDialogo.pedirTexto(getFrame(), "Nova Subtarefa", "Descrição da nova subtarefa:");
-        descricao.ifPresent(desc -> {
-            tarefaPai.adicionarSubtarefa(new Subtarefa(desc));
+        String descricao = JOptionPane.showInputDialog(this, "Descrição da nova subtarefa:", "Nova Subtarefa", JOptionPane.PLAIN_MESSAGE);
+        if (descricao != null && !descricao.trim().isEmpty()) {
+            tarefaPai.adicionarSubtarefa(new Subtarefa(descricao));
             orquestrador.atualizarTarefa(tarefaPai);
-            atualizarListaSubtarefas(tarefaPai);
-            listaDeTarefas.repaint();
-        });
+            exibirTodasAsTarefas();
+        }
     }
 
     private void editarSubtarefaSelecionada() {
-        Tarefa tarefaPai = listaDeTarefas.getSelectedValue();
         Subtarefa subtarefa = listaDeSubtarefas.getSelectedValue();
-        if (tarefaPai == null || subtarefa == null) {
-            PadraoDialogo.mostrarMensagemErro(getFrame(), "Selecione uma subtarefa para editar.");
+        if (subtarefa == null) {
+            JOptionPane.showMessageDialog(this, "Selecione uma subtarefa para editar.", "Nenhuma Subtarefa Selecionada", JOptionPane.WARNING_MESSAGE);
             return;
         }
-        Optional<String> novoTitulo = PadraoDialogo.pedirTexto(getFrame(), "Editar Subtarefa", "Nova descrição:");
-        novoTitulo.ifPresent(titulo -> {
-             subtarefa.setTitulo(titulo);
-             orquestrador.atualizarTarefa(tarefaPai);
-             atualizarListaSubtarefas(tarefaPai);
-        });
+        String novoTitulo = (String) JOptionPane.showInputDialog(this, "Nova descrição:", "Editar Subtarefa", JOptionPane.PLAIN_MESSAGE, null, null, subtarefa.getTitulo());
+        if (novoTitulo != null && !novoTitulo.trim().isEmpty()) {
+            subtarefa.setTitulo(novoTitulo);
+            orquestrador.atualizarTarefa(listaDeTarefas.getSelectedValue());
+            listaDeSubtarefas.repaint();
+        }
     }
-    
+
     private void excluirSubtarefaSelecionada() {
         Tarefa tarefaPai = listaDeTarefas.getSelectedValue();
         Subtarefa subtarefa = listaDeSubtarefas.getSelectedValue();
         if (tarefaPai == null || subtarefa == null) {
-            PadraoDialogo.mostrarMensagemErro(getFrame(), "Selecione uma subtarefa para excluir.");
+            JOptionPane.showMessageDialog(this, "Selecione uma subtarefa para excluir.", "Nenhuma Subtarefa Selecionada", JOptionPane.WARNING_MESSAGE);
             return;
         }
-        if (PadraoDialogo.confirmarAcao(getFrame(), "Confirmar Exclusão", "Excluir a subtarefa '" + subtarefa.getTitulo() + "'?")) {
+        int resposta = JOptionPane.showConfirmDialog(this, "Excluir a subtarefa '" + subtarefa.getTitulo() + "'?", "Confirmar Exclusão", JOptionPane.YES_NO_OPTION);
+        if (resposta == JOptionPane.YES_OPTION) {
             tarefaPai.removerSubtarefa(subtarefa);
             orquestrador.atualizarTarefa(tarefaPai);
-            atualizarListaSubtarefas(tarefaPai);
-            listaDeTarefas.repaint();
+            exibirTodasAsTarefas();
         }
     }
+
+    class SubtarefaCellRenderer extends JCheckBox implements ListCellRenderer<Subtarefa> {
+        @Override
+        public Component getListCellRendererComponent(JList<? extends Subtarefa> list, Subtarefa value, int index, boolean isSelected, boolean cellHasFocus) {
+            setText(value.getTitulo());
+            setSelected(value.isStatus());
+            setBackground(isSelected ? list.getSelectionBackground() : list.getBackground());
+            setForeground(isSelected ? list.getSelectionForeground() : list.getForeground());
+            setEnabled(list.isEnabled());
+            setFont(list.getFont());
+            setFocusPainted(false);
+            return this;
+        }
+    }
+
 }
