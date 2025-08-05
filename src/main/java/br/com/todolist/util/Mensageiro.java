@@ -1,4 +1,4 @@
-package org.utils;
+package br.com.todolist.util;
 
 import jakarta.activation.DataHandler;
 import jakarta.activation.DataSource;
@@ -9,7 +9,6 @@ import jakarta.mail.internet.MimeBodyPart;
 import jakarta.mail.internet.MimeMessage;
 import jakarta.mail.internet.MimeMultipart;
 import java.io.File;
-import java.time.LocalDate;
 import java.util.Properties;
 
 public class Mensageiro {

@@ -14,3 +14,11 @@
 # Arquivos de sistema
 .DS_Store
 Thumbs.db
+
+# Pasta de arquivos
+arquivos/
+
+# Arquivos de front-end
+index.html
+script.js
+styles.css

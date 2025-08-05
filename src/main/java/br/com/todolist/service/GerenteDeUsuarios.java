@@ -1,8 +1,17 @@
-package br.com.todolist.services;
+// Em: src/main/java/br/com/todolist/service/GerenteDeUsuarios.java
+package br.com.todolist.service;
+
 import br.com.todolist.models.Usuario;
 import br.com.todolist.persistence.GerenciadorDePersistenciaJson;
+
+import java.io.File;
+import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.List;
+import org.mindrot.jbcrypt.BCrypt;
+
+// Importe a classe TypeReference do Jackson para obter o tipo genérico
+import com.fasterxml.jackson.core.type.TypeReference;
 
 public class GerenteDeUsuarios {
 
@@ -11,7 +20,7 @@ public class GerenteDeUsuarios {
     private List<Usuario> usuarios;
 
     public GerenteDeUsuarios() {
-        criarPastaDeArquivos(); 
+        criarPastaDeArquivos();
         this.persistencia = new GerenciadorDePersistenciaJson(ARQUIVO_USUARIOS);
         this.usuarios = carregarUsuarios();
     }
@@ -27,8 +36,13 @@ public class GerenteDeUsuarios {
         }
     }
 
+    // Método corrigido para usar a abordagem do Jackson para tipos genéricos
     private List<Usuario> carregarUsuarios() {
-        List<Usuario> lista = (List<Usuario>) persistencia.carregar(ArrayList.class);
+        // Usa a classe TypeReference do Jackson, que é a forma correta de obter
+        // o tipo genérico da lista para a desserialização.
+        Type tipoListaDeUsuarios = new TypeReference<List<Usuario>>() {
+        }.getType();
+        List<Usuario> lista = persistencia.carregar(tipoListaDeUsuarios);
         return lista != null ? lista : new ArrayList<>();
     }
 
@@ -36,15 +50,19 @@ public class GerenteDeUsuarios {
         persistencia.salvar(this.usuarios);
     }
 
+    private String hashSenha(String senhaPura) {
+        return BCrypt.hashpw(senhaPura, BCrypt.gensalt());
+    }
+
     public boolean criarNovoUsuario(String nome, String email, String password) {
         if (buscarUsuarioPorEmail(email) != null) {
-            System.err.println("Erro: Já existe um usuário com este email.");
             return false;
         }
-        Usuario novoUsuario = new Usuario(nome, email, password);
+
+        String senhaHasheada = hashSenha(password);
+        Usuario novoUsuario = new Usuario(nome, email, senhaHasheada);
         usuarios.add(novoUsuario);
         salvarUsuarios();
-        System.out.println("Usuário " + nome + " criado com sucesso!");
         return true;
     }
 
@@ -54,7 +72,7 @@ public class GerenteDeUsuarios {
             System.out.println("Autenticação bem-sucedida para " + usuario.getNome());
             return usuario;
         }
-        
+
         System.err.println("Erro: Email ou senha incorretos.");
         return null;
     }
@@ -62,7 +80,7 @@ public class GerenteDeUsuarios {
     public boolean verificarSenha(String senhaFornecida, String hashSalvo) {
         return BCrypt.checkpw(senhaFornecida, hashSalvo);
     }
-    
+
     public Usuario buscarUsuarioPorEmail(String email) {
         for (Usuario usuario : usuarios) {
             if (usuario.getEmail().equals(email)) {

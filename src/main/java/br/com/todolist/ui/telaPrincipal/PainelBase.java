@@ -6,11 +6,10 @@ import javax.swing.JPanel;
 public abstract class PainelBase extends JPanel {
 
     public PainelBase() {
-        inicializarLayout();
     }
 
 
-    private final void inicializarLayout() {
+    protected final void inicializarLayout() {
         setLayout(new BorderLayout(10, 10));
 
         JPanel painelDeBotoes = criarPainelDeBotoes();
