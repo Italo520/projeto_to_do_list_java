@@ -2,20 +2,21 @@
 package br.com.todolist.ui.telaPrincipal;
 
 import java.awt.BorderLayout;
-import java.util.List; // MUDANÇA: Import necessário
+import java.time.LocalDate;
+import java.util.List;
 import javax.swing.JFrame;
 import javax.swing.JTabbedPane;
-import br.com.todolist.models.Tarefa; // MUDANÇA: Import necessário
+import br.com.todolist.models.Tarefa;
 import br.com.todolist.models.Usuario;
 import br.com.todolist.service.Orquestrador;
+import br.com.todolist.ui.TelasDialogo.PadraoDialogo;
 
 public class TelaPrincipal extends JFrame {
 
     private Orquestrador orquestrador;
-    // MUDANÇA: Transformando os painéis em campos da classe
+    private JTabbedPane painelComAbas;
     private PainelTarefas painelTarefas;
     private PainelEventos painelEventos;
-    private JTabbedPane painelComAbas;
 
     public TelaPrincipal(Usuario usuarioLogado) {
         super("ToDoLIst - Usuário: " + usuarioLogado.getNome());
@@ -32,26 +33,45 @@ public class TelaPrincipal extends JFrame {
 
     private void montarLayout() {
         setJMenuBar(BarraFerramentas.criarBarraFerramentas(this, this.orquestrador));
-        
         criarPaineis();
-
         setLayout(new BorderLayout());
         add(painelComAbas, BorderLayout.CENTER);
     }
 
     private void criarPaineis() {
         painelComAbas = new JTabbedPane();
-        
         this.painelTarefas = new PainelTarefas(this.orquestrador);
         this.painelEventos = new PainelEventos(this.orquestrador);
-
         painelComAbas.addTab("Tarefas", null, this.painelTarefas, "Gerenciador de Tarefas");
         painelComAbas.addTab("Eventos", null, this.painelEventos, "Gerenciador de Eventos");
     }
 
-    public void atualizarPainelDeTarefas(List<Tarefa> tarefas) {
+    // --- MÉTODOS PÚBLICOS PARA COMUNICAÇÃO (A "PONTE") ---
 
+    /**
+     * CORREÇÃO: Este método agora recebe a data, busca os dados e comanda o painel.
+     */
+    public void filtrarTarefasDaTelaPrincipal(LocalDate dia) {
+        // 1. A TelaPrincipal chama o orquestrador para buscar os dados
+        List<Tarefa> tarefasFiltradas = orquestrador.listarTarefasPorDia(dia);
+
+        // 2. Garante que a aba de tarefas esteja visível
         painelComAbas.setSelectedComponent(painelTarefas);
-        painelTarefas.exibirTarefasDoDia(tarefas);
+        
+        // 3. Comanda o PainelTarefas a se atualizar com a lista filtrada
+        painelTarefas.exibirListaFiltrada(tarefasFiltradas);
+        
+        // 4. Mostra um aviso se nada for encontrado
+        if (tarefasFiltradas.isEmpty()) {
+            PadraoDialogo.mostrarMensagemInfo(this, "Nenhuma tarefa encontrada para o dia selecionado.");
+        }
+    }
+
+    /**
+     * Comanda o PainelTarefas a remover os filtros e mostrar todos os itens.
+     */
+    public void mostrarTodasAsTarefas() {
+        painelComAbas.setSelectedComponent(painelTarefas);
+        painelTarefas.popularComTodasAsTarefas();
     }
 }

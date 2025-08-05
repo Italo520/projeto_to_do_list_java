@@ -65,6 +65,10 @@ public class Orquestrador {
         return this.gerenteDeTarefas.listarTarefasCriticas();
     }
 
+    public double calcularPercentualTarefa(Tarefa t){
+        return this.gerenteDeTarefas.obterPercentual(t);
+    }
+
     public boolean cadastrarEvento(String titulo, String descricao, LocalDate deadline) {
         boolean sucesso = this.gerenteDeEventos
                 .cadastrarEvento(new Evento(titulo, descricao, this.emailUsuario, deadline));

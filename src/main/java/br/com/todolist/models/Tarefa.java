@@ -3,7 +3,6 @@ package br.com.todolist.models;
 import java.util.ArrayList;
 import java.util.List;
 import java.time.LocalDate;
-import java.util.stream.Collectors;
 
 public class Tarefa extends Itens {
 
@@ -21,17 +20,7 @@ public class Tarefa extends Itens {
         this.subtarefas = new ArrayList<>();
     }
 
-    public double obterPercentual() {
-        if (subtarefas.isEmpty()) {
-            return dataConclusao != null ? 100.0 : 0.0;
-        }
-
-        long subtarefasConcluidas = this.subtarefas.stream()
-                .filter(Subtarefa::isStatus)
-                .count();
-
-        return ((double) subtarefasConcluidas / subtarefas.size()) * 100;
-    }
+    
 
     public LocalDate getDataConclusao() {
         return dataConclusao;
@@ -66,6 +55,6 @@ public class Tarefa extends Itens {
     }
 
     public String toString() {
-        return getTitulo() + " (Conclusão da Tarefa: " + (int) obterPercentual() + "%)";
+        return getTitulo();
     }
 }
