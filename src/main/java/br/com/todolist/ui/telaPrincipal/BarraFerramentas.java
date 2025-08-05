@@ -1,37 +1,36 @@
+// Em: src/main/java/br/com/todolist/ui/telaPrincipal/BarraFerramentas.java
 package br.com.todolist.ui.telaPrincipal;
 
+import br.com.todolist.models.Tarefa;
+import br.com.todolist.service.Orquestrador; // MUDANÇA: Import necessário
+import br.com.todolist.ui.TelasDialogo.PadraoDialogo;
+
 import javax.swing.*;
+import java.awt.Dimension; // MUDANÇA: Import necessário
 import java.awt.event.ActionEvent;
-import java.awt.event.KeyEvent;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
+import java.util.List; // MUDANÇA: Import necessário
+import java.util.Optional;
 
 public class BarraFerramentas {
-    public static JMenuBar criarBarraFerramentas(JFrame frame) {
-        return criarBarraDeMenus(frame);
-    }
 
-    /**
-     * Cria e configura a barra de menus (JMenuBar) principal da aplicação.
-     * @param frame A janela principal, usada para ações como "fechar".
-     * @return um objeto JMenuBar pronto para ser adicionado à janela.
-     */
-    public static JMenuBar criarBarraDeMenus(JFrame frame) {
-        // 1. Crie a barra de menus principal
+    // MUDANÇA: A assinatura do método agora precisa receber o Orquestrador.
+    public static JMenuBar criarBarraFerramentas(JFrame frame, Orquestrador orquestrador) {
+
         JMenuBar menuBar = new JMenuBar();
 
-        // 2. Crie os menus que irão na barra (ex: Arquivo, Editar, Ajuda)
+        // Menus da Barra
         JMenu menuArquivo = new JMenu("Arquivo");
+        JMenu menuTarefas = new JMenu("Tarefas");
+        JMenu menuEventos = new JMenu("Eventos");
         JMenu menuAjuda = new JMenu("Ajuda");
-        
-        // Adiciona um "atalho" para o menu Arquivo (Alt + A)
-        menuArquivo.setMnemonic(KeyEvent.VK_A);
 
-
-        // 3. Crie os itens de cada menu
-        
         // --- Itens do Menu Arquivo ---
+
         JMenuItem itemSair = new JMenuItem("Sair");
         itemSair.addActionListener((ActionEvent e) -> {
-            // Ação para fechar a aplicação
             frame.dispose();
             System.exit(0);
         });
@@ -39,26 +38,76 @@ public class BarraFerramentas {
         // --- Itens do Menu Ajuda ---
         JMenuItem itemSobre = new JMenuItem("Sobre");
         itemSobre.addActionListener((ActionEvent e) -> {
-            // Ação para mostrar uma janela de diálogo
-            JOptionPane.showMessageDialog(frame, 
-                "Aplicação de Lista de Tarefas\nVersão 1.0", 
-                "Sobre", 
+            JOptionPane.showMessageDialog(frame,
+                "Aplicação de Lista de Tarefas\nVersão 1.0",
+                "Sobre",
                 JOptionPane.INFORMATION_MESSAGE);
         });
 
+        // --- Itens do Menu Tarefas ---
+        JMenuItem listarTarefasPorDia = new JMenuItem("Listar Tarefas por Dia");
+        JMenuItem listarTarefasCriticas = new JMenuItem("Listar Tarefas Criticas");
+        JMenuItem pdfDoDia = new JMenuItem("PDF do Dia");
+        JMenuItem enviarListaDeTarefasDoDiaPorEmail = new JMenuItem("Enviar Lista de Tarefas do Dia por Email");
+        JMenuItem relatorioTarefasPorMes = new JMenuItem("Relatório de Tarefas por Mês");
 
-        // 4. Adicione os itens aos seus respectivos menus
+
+
+        // Itens Menu Eventos
+
+        JMenuItem listarEventosProDia = new JMenuItem("Listar Eventos por Dia");
+        JMenuItem listarEventosMesEspecifico = new JMenuItem("Listar Eventos Mes Específico");
+
+
+
+        
+
+        listarTarefasPorDia.addActionListener((ActionEvent e) -> {
+    Optional<LocalDate> dataOpcional = PadraoDialogo.pedirData(
+            frame,
+            "Listar Tarefas por Dia",
+            "Digite a data (formato dd/MM/yyyy):"
+    );
+
+    // O ifPresent garante que o código só execute se o usuário fornecer uma data
+    dataOpcional.ifPresent(data -> {
+        // 1. Busca os dados no orquestrador
+        List<Tarefa> tarefas = orquestrador.listarTarefasPorDia(data);
+
+        // 2. Manda a TelaPrincipal atualizar o painel com esses dados
+        if (frame instanceof TelaPrincipal) {
+            ((TelaPrincipal) frame).atualizarPainelDeTarefas(tarefas);
+        }
+
+        // 3. Mostra uma mensagem informativa se a lista estiver vazia
+        if (tarefas.isEmpty()) {
+            PadraoDialogo.mostrarMensagemInfo(frame, "Nenhuma tarefa encontrada para este dia.");
+        }
+    });
+});
+          
+        
+
+        // Adiciona os itens aos seus respectivos menus
         menuArquivo.add(itemSair);
         menuAjuda.add(itemSobre);
+        menuTarefas.add(listarTarefasPorDia);
+        menuTarefas.add(listarTarefasCriticas);
+        menuTarefas.add(pdfDoDia);
+        menuTarefas.add(enviarListaDeTarefasDoDiaPorEmail);
+        menuTarefas.add(relatorioTarefasPorMes);
+        menuEventos.add(listarEventosProDia);
+        menuEventos.add(listarEventosMesEspecifico);
 
 
-        // 5. Adicione os menus à barra de menus principal
+
+
+        // Adiciona os menus à barra de menus principal
         menuBar.add(menuArquivo);
+        menuBar.add(menuTarefas);
+        menuBar.add(menuEventos);
         menuBar.add(menuAjuda);
 
-        // 6. Retorne a barra de menus completa
         return menuBar;
- 
-    
-}
+    }
 }

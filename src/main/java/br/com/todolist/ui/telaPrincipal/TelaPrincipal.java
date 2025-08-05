@@ -2,20 +2,24 @@
 package br.com.todolist.ui.telaPrincipal;
 
 import java.awt.BorderLayout;
+import java.util.List; // MUDANÇA: Import necessário
 import javax.swing.JFrame;
 import javax.swing.JTabbedPane;
+import br.com.todolist.models.Tarefa; // MUDANÇA: Import necessário
 import br.com.todolist.models.Usuario;
-import br.com.todolist.service.Orquestrador; // Importe o Orquestrador
+import br.com.todolist.service.Orquestrador;
 
 public class TelaPrincipal extends JFrame {
 
     private Orquestrador orquestrador;
+    // MUDANÇA: Transformando os painéis em campos da classe
+    private PainelTarefas painelTarefas;
+    private PainelEventos painelEventos;
+    private JTabbedPane painelComAbas;
 
     public TelaPrincipal(Usuario usuarioLogado) {
         super("ToDoLIst - Usuário: " + usuarioLogado.getNome());
-
         this.orquestrador = new Orquestrador(usuarioLogado);
-
         configurarJanela();
         montarLayout();
     }
@@ -27,23 +31,27 @@ public class TelaPrincipal extends JFrame {
     }
 
     private void montarLayout() {
-
-        setJMenuBar(BarraFerramentas.criarBarraFerramentas(this));
-        JTabbedPane painelComAbas = criarPaineis();
+        setJMenuBar(BarraFerramentas.criarBarraFerramentas(this, this.orquestrador));
+        
+        criarPaineis();
 
         setLayout(new BorderLayout());
         add(painelComAbas, BorderLayout.CENTER);
     }
 
-    private JTabbedPane criarPaineis() {
-        JTabbedPane aba = new JTabbedPane();
+    private void criarPaineis() {
+        painelComAbas = new JTabbedPane();
+        
+        this.painelTarefas = new PainelTarefas(this.orquestrador);
+        this.painelEventos = new PainelEventos(this.orquestrador);
 
-        // No futuro, os painéis também podem precisar do orquestrador
-        // Ex: new PainelTarefas(this.orquestrador)
-        aba.addTab("Tarefas", null, new PainelTarefas(this.orquestrador), "Gerenciador de Tarefas");
-        aba.addTab("Eventos", null, new PainelEventos(this.orquestrador), "Gerenciador de Eventos");
-
-        return aba;
+        painelComAbas.addTab("Tarefas", null, this.painelTarefas, "Gerenciador de Tarefas");
+        painelComAbas.addTab("Eventos", null, this.painelEventos, "Gerenciador de Eventos");
     }
 
+    public void atualizarPainelDeTarefas(List<Tarefa> tarefas) {
+
+        painelComAbas.setSelectedComponent(painelTarefas);
+        painelTarefas.exibirTarefasDoDia(tarefas);
+    }
 }
