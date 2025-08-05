@@ -8,23 +8,22 @@ import java.time.LocalDate;
 import java.time.YearMonth;
 import java.util.List;
 
-
 public class Orquestrador {
 
     private final GerenteDeTarefas gerenteDeTarefas;
     private final GerenteDeEventos gerenteDeEventos;
+    private final String emailUsuario;
 
-   
     public Orquestrador(Usuario usuario) {
-        GerenteDeDadosDoUsuario dadosDoUsuario = new GerenteDeDadosDoUsuario(usuario);
-        this.gerenteDeTarefas = new GerenteDeTarefas(dadosDoUsuario);
-        this.gerenteDeEventos = new GerenteDeEventos(dadosDoUsuario);
+        GerenteDeDadosDoUsuario dadosDoUsuario = new GerenteDeDadosDoUsuario();
+        this.emailUsuario = usuario.getEmail();
+        this.gerenteDeTarefas = new GerenteDeTarefas(dadosDoUsuario, this.emailUsuario);
+        this.gerenteDeEventos = new GerenteDeEventos(dadosDoUsuario, this.emailUsuario);
     }
 
-
-
-    public void cadastrarTarefa(Tarefa tarefa) {
-        this.gerenteDeTarefas.cadastrarTarefa(tarefa);
+    public void cadastrarTarefa(String titulo, String descricao, LocalDate deadline, int prioridade) {
+        Tarefa novaTarefa = new Tarefa(titulo, descricao, this.emailUsuario, deadline, prioridade);
+        this.gerenteDeTarefas.cadastrarTarefa(novaTarefa);
     }
 
     public List<Tarefa> listarTodasTarefas() {
@@ -34,11 +33,12 @@ public class Orquestrador {
     public void excluirTarefa(Tarefa tarefa) {
         this.gerenteDeTarefas.excluirTarefa(tarefa);
     }
-    //editar tarefa edita a tarefa da de editar tarefa
-    public void editarTarefa(Tarefa tarefaOriginal, String novoTitulo, String novaDescricao, LocalDate novoDeadline, int novaPrioridade) {
+
+    public void editarTarefa(Tarefa tarefaOriginal, String novoTitulo, String novaDescricao, LocalDate novoDeadline,
+            int novaPrioridade) {
         this.gerenteDeTarefas.editarTarefa(tarefaOriginal, novoTitulo, novaDescricao, novoDeadline, novaPrioridade);
     }
-    //atualizar tarefa atualiza o objeto tarefa com suas subtarefas
+
     public void atualizarTarefa(Tarefa tarefa) {
         this.gerenteDeTarefas.atualizarTarefa(tarefa);
     }
@@ -50,11 +50,11 @@ public class Orquestrador {
     public List<Tarefa> listarTarefasCriticas() {
         return this.gerenteDeTarefas.listarTarefasCriticas();
     }
-    
-    public boolean cadastrarEvento(Evento evento) {
-        return this.gerenteDeEventos.cadastrarEvento(evento);
-    }
 
+    public boolean cadastrarEvento(String titulo, String descricao, LocalDate deadline) {
+        Evento novoEvento = new Evento(titulo, descricao, this.emailUsuario, deadline);
+        return this.gerenteDeEventos.cadastrarEvento(novoEvento);
+    }
 
     public List<Evento> listarTodosEventos() {
         return this.gerenteDeEventos.listarTodosEventos();
@@ -75,6 +75,4 @@ public class Orquestrador {
     public List<Evento> listarEventosPorMes(YearMonth mes) {
         return this.gerenteDeEventos.listarEventosPorMes(mes);
     }
-
-
 }

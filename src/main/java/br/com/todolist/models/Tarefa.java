@@ -1,42 +1,69 @@
 package br.com.todolist.models;
+
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
-import java.time.LocalDate;
 
-public class Tarefa extends Itens{
+public class Tarefa extends Itens {
 
     private double percentual;
     private LocalDate dataConclusao;
     private int prioridade;
     private List<Subtarefa> subtarefas;
 
-    public Tarefa(String titulo, String descricao, LocalDate deadline, int prioridade) {
-        super(titulo, descricao, deadline);
+    public Tarefa(String titulo, String descricao, String criado_por, LocalDate deadline, int prioridade) {
+        super(titulo, descricao, "Tarefa", criado_por, deadline);
         this.prioridade = prioridade;
         this.percentual = 0.0;
         this.dataConclusao = null;
         this.subtarefas = new ArrayList<>();
     }
 
-    public double getPercentual() { return percentual; }
+    public Tarefa() {
+        super();
+    }
 
-    public void setPercentual(double percentual) { this.percentual = percentual; }
-    
-    public LocalDate getDataConclusao() { return dataConclusao; }
+    public double getPercentual() {
+        return percentual;
+    }
 
-    public void setDataConclusao(LocalDate dataConclusao) { this.dataConclusao = dataConclusao; }
+    public void setPercentual(double percentual) {
+        this.percentual = percentual;
+    }
 
-    public int getPrioridade() { return prioridade; }
+    public LocalDate getDataConclusao() {
+        return dataConclusao;
+    }
 
-    public void setPrioridade(int prioridade) { this.prioridade = prioridade; }
+    public void setDataConclusao(LocalDate dataConclusao) {
+        this.dataConclusao = dataConclusao;
+    }
 
-    public List<Subtarefa> getSubtarefas() { return subtarefas; }
+    public int getPrioridade() {
+        return prioridade;
+    }
 
-    public void setSubtarefas(List<Subtarefa> subtarefas) { this.subtarefas = subtarefas; }
+    public void setPrioridade(int prioridade) {
+        this.prioridade = prioridade;
+    }
 
-    public void adicionarSubtarefa(Subtarefa subtarefa) { this.subtarefas.add(subtarefa); }
+    public List<Subtarefa> getSubtarefas() {
+        return subtarefas;
+    }
 
-    public void removerSubtarefa(Subtarefa subtarefa) { this.subtarefas.remove(subtarefa); }
-    
-    public String toString() { return getTitulo(); }
+    public void setSubtarefas(List<Subtarefa> subtarefas) {
+        this.subtarefas = subtarefas;
+    }
+
+    public void adicionarSubtarefa(Subtarefa subtarefa) {
+        this.subtarefas.add(subtarefa);
+    }
+
+    public void removerSubtarefa(Subtarefa subtarefa) {
+        this.subtarefas.remove(subtarefa);
+    }
+
+    public String toString() {
+        return getTitulo();
+    }
 }

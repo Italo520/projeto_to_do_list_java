@@ -59,21 +59,41 @@ public class DialogoTarefa extends JDialog {
         gbc.insets = new Insets(5, 5, 5, 5);
         gbc.fill = GridBagConstraints.HORIZONTAL;
 
-        gbc.gridx = 0; gbc.gridy = 0; add(new JLabel("Título:"), gbc);
-        gbc.gridx = 1; gbc.gridy = 0; gbc.gridwidth = 2;
-        campoTitulo = new JTextField(25); add(campoTitulo, gbc);
+        gbc.gridx = 0;
+        gbc.gridy = 0;
+        add(new JLabel("Título:"), gbc);
+        gbc.gridx = 1;
+        gbc.gridy = 0;
+        gbc.gridwidth = 2;
+        campoTitulo = new JTextField(25);
+        add(campoTitulo, gbc);
 
-        gbc.gridx = 0; gbc.gridy = 1; add(new JLabel("Descrição:"), gbc);
-        gbc.gridx = 1; gbc.gridy = 1; gbc.gridwidth = 2;
-        campoDescricao = new JTextField(25); add(campoDescricao, gbc);
+        gbc.gridx = 0;
+        gbc.gridy = 1;
+        add(new JLabel("Descrição:"), gbc);
+        gbc.gridx = 1;
+        gbc.gridy = 1;
+        gbc.gridwidth = 2;
+        campoDescricao = new JTextField(25);
+        add(campoDescricao, gbc);
 
-        gbc.gridx = 0; gbc.gridy = 2; gbc.gridwidth = 1; add(new JLabel("Prioridade:"), gbc);
-        gbc.gridx = 1; gbc.gridy = 2;
-        campoPrioridade = new JSpinner(new SpinnerNumberModel(1, 1, 5, 1)); add(campoPrioridade, gbc);
+        gbc.gridx = 0;
+        gbc.gridy = 2;
+        gbc.gridwidth = 1;
+        add(new JLabel("Prioridade:"), gbc);
+        gbc.gridx = 1;
+        gbc.gridy = 2;
+        campoPrioridade = new JSpinner(new SpinnerNumberModel(1, 1, 5, 1));
+        add(campoPrioridade, gbc);
 
-        gbc.gridx = 0; gbc.gridy = 3; add(new JLabel("Prazo (dd/MM/yyyy):"), gbc);
-        gbc.gridx = 1; gbc.gridy = 3; gbc.gridwidth = 2;
-        campoPrazo = new JTextField(10); add(campoPrazo, gbc);
+        gbc.gridx = 0;
+        gbc.gridy = 3;
+        add(new JLabel("Prazo (dd/MM/yyyy):"), gbc);
+        gbc.gridx = 1;
+        gbc.gridy = 3;
+        gbc.gridwidth = 2;
+        campoPrazo = new JTextField(10);
+        add(campoPrazo, gbc);
 
         JPanel painelBotoes = new JPanel(new FlowLayout(FlowLayout.CENTER));
         botaoSalvar = new JButton("Salvar");
@@ -81,7 +101,10 @@ public class DialogoTarefa extends JDialog {
         painelBotoes.add(botaoSalvar);
         painelBotoes.add(botaoCancelar);
 
-        gbc.gridx = 0; gbc.gridy = 4; gbc.gridwidth = 3; gbc.fill = GridBagConstraints.NONE;
+        gbc.gridx = 0;
+        gbc.gridy = 4;
+        gbc.gridwidth = 3;
+        gbc.fill = GridBagConstraints.NONE;
         add(painelBotoes, gbc);
     }
 
@@ -104,7 +127,8 @@ public class DialogoTarefa extends JDialog {
             // 1. Coleta e valida os dados do formulário
             String titulo = campoTitulo.getText().trim();
             if (titulo.isEmpty()) {
-                JOptionPane.showMessageDialog(this, "O campo 'Título' é obrigatório.", "Erro de Validação", JOptionPane.ERROR_MESSAGE);
+                JOptionPane.showMessageDialog(this, "O campo 'Título' é obrigatório.", "Erro de Validação",
+                        JOptionPane.ERROR_MESSAGE);
                 return;
             }
             String descricao = campoDescricao.getText().trim();
@@ -113,8 +137,8 @@ public class DialogoTarefa extends JDialog {
 
             // 2. Decide se é uma nova tarefa ou uma edição
             if (this.tarefa == null) { // Criando uma nova tarefa
-                Tarefa novaTarefa = new Tarefa(titulo, descricao, prazo, prioridade);
-                orquestrador.cadastrarTarefa(novaTarefa);
+                // CORREÇÃO: Chama o novo método do orquestrador com os parâmetros
+                orquestrador.cadastrarTarefa(titulo, descricao, prazo, prioridade);
             } else { // Editando uma tarefa existente
                 orquestrador.editarTarefa(this.tarefa, titulo, descricao, prazo, prioridade);
             }
@@ -124,7 +148,8 @@ public class DialogoTarefa extends JDialog {
             dispose();
 
         } catch (DateTimeParseException e) {
-            JOptionPane.showMessageDialog(this, "Formato de data inválido. Use dd/MM/yyyy.", "Erro de Formato", JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(this, "Formato de data inválido. Use dd/MM/yyyy.", "Erro de Formato",
+                    JOptionPane.ERROR_MESSAGE);
         }
     }
 }

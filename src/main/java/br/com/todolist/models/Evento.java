@@ -4,10 +4,14 @@ import java.time.LocalDate;
 
 public class Evento extends Itens {
 
-    public Evento(String titulo, String descricao, LocalDate deadline) {
-        super(titulo, descricao, deadline);
+    public Evento(String titulo, String descricao, String criado_por, LocalDate deadline) {
+        super(titulo, descricao, "Evento", criado_por, deadline);
     }
 
+    public Evento() {
+    }
+
+    @Override
     public String toString() {
         return "Evento: " + getTitulo();
     }
