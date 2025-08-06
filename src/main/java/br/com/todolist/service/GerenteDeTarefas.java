@@ -1,6 +1,5 @@
 package br.com.todolist.service;
 
-import br.com.todolist.models.Subtarefa;
 import br.com.todolist.models.Tarefa;
 import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
@@ -87,26 +86,5 @@ public class GerenteDeTarefas {
             System.err.println("Aviso: Tentativa de atualizar uma tarefa não encontrada.");
         }
     }
-
-    public double obterPercentual(Tarefa tarefa) {
-        if (tarefa == null) {
-            return 0.0;
-        }
-
-        List<Subtarefa> subtarefas = tarefa.getSubtarefas();
-
-        // Se não houver subtarefas, o progresso é baseado na data de conclusão.
-        if (subtarefas == null || subtarefas.isEmpty()) {
-            return tarefa.getDataConclusao() != null ? 100.0 : 0.0;
-        }
-
-        // Se houver subtarefas, calcula com base nelas.
-        long subtarefasConcluidas = subtarefas.stream()
-                .filter(Subtarefa::isStatus) // Garanta que Subtarefa tenha o método isStatus()
-                .count();
-
-        return ((double) subtarefasConcluidas / subtarefas.size()) * 100.0;
-    }
-
 
 }

@@ -1,51 +1,46 @@
-// Em: src/main/java/br/com/todolist/ui/telaPrincipal/PainelEventos.java
+// Conteúdo para: src/main/java/br/com/todolist/ui/telaPrincipal/PainelEventos.java
 package br.com.todolist.ui.telaPrincipal;
 
 import br.com.todolist.models.Evento;
-import br.com.todolist.service.Orquestrador;
+import br.com.todolist.service.Orquestrador; // MUDANÇA: Import do Orquestrador
 import br.com.todolist.ui.TelasDialogo.DialogoEvento;
 
 import javax.swing.*;
 import java.awt.*;
-import java.util.List;
 
 public class PainelEventos extends PainelBase {
 
+    // MUDANÇA: O Orquestrador é a nova fonte da verdade para os dados.
     private final Orquestrador orquestrador;
+
     private DefaultListModel<Evento> modeloListaEventos;
     private JList<Evento> listaDeEventos;
     private JTextArea areaDescricao;
 
+    // MUDANÇA: Construtor agora recebe o Orquestrador (Injeção de Dependência).
     public PainelEventos(Orquestrador orquestrador) {
         this.orquestrador = orquestrador;
         inicializarLayout();
     }
 
-    // --- MÉTODOS PÚBLICOS PARA CONTROLE EXTERNO ---
+    @Override
+    protected JPanel criarPainelDeBotoes() {
+        JPanel painel = new JPanel(new FlowLayout(FlowLayout.CENTER));
+        
+        JButton botaoNovoEvento = new JButton("Novo Evento");
+        JButton botaoEditarEvento = new JButton("Editar Evento");
+        JButton botaoExcluirEvento = new JButton("Excluir Evento");
 
-    /**
-     * MÉTODO CENTRALIZADO: Limpa a lista e exibe um novo conjunto de eventos.
-     * É este o método que estava faltando e que a TelaPrincipal precisa chamar.
-     * @param eventos A lista de eventos a ser exibida.
-     */
-    public void exibirEventos(List<Evento> eventos) {
-        modeloListaEventos.clear();
-        if (eventos != null) {
-            eventos.forEach(modeloListaEventos::addElement);
-        }
-        areaDescricao.setText(""); // Limpa a área de descrição
+        botaoNovoEvento.addActionListener(e -> adicionarNovoEvento());
+        botaoEditarEvento.addActionListener(e -> editarEventoSelecionado());
+        botaoExcluirEvento.addActionListener(e -> excluirEventoSelecionado());
+
+        painel.add(botaoNovoEvento);
+        painel.add(botaoEditarEvento);
+        painel.add(botaoExcluirEvento);
+
+        return painel;
     }
-
-    /**
-     * Carrega e exibe todos os eventos do usuário na lista.
-     */
-    public void exibirTodosOsEventos() {
-        List<Evento> todosOsEventos = this.orquestrador.listarTodosEventos();
-        exibirEventos(todosOsEventos);
-    }
-
-
-    // --- CONFIGURAÇÃO DA UI ---
 
     @Override
     protected JPanel criarPainelDeConteudo() {
@@ -67,8 +62,8 @@ public class PainelEventos extends PainelBase {
             }
         });
 
-        // Carrega os eventos iniciais ao criar o painel.
-        exibirTodosOsEventos();
+        // MUDANÇA: Carrega os eventos reais do Orquestrador ao iniciar.
+        popularListaEventos();
 
         JSplitPane painelDividido = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT,
                 new JScrollPane(listaDeEventos),
@@ -80,33 +75,27 @@ public class PainelEventos extends PainelBase {
 
         return painelDeConteudo;
     }
-    
-    @Override
-    protected JPanel criarPainelDeBotoes() {
-        JPanel painel = new JPanel(new FlowLayout(FlowLayout.CENTER));
-        
-        JButton botaoNovoEvento = new JButton("Novo Evento");
-        JButton botaoEditarEvento = new JButton("Editar Evento");
-        JButton botaoExcluirEvento = new JButton("Excluir Evento");
 
-        botaoNovoEvento.addActionListener(e -> adicionarNovoEvento());
-        botaoEditarEvento.addActionListener(e -> editarEventoSelecionado());
-        botaoExcluirEvento.addActionListener(e -> excluirEventoSelecionado());
-
-        painel.add(botaoNovoEvento);
-        painel.add(botaoEditarEvento);
-        painel.add(botaoExcluirEvento);
-
-        return painel;
+    private void popularListaEventos() {
+        modeloListaEventos.clear();
+        // MUDANÇA: Busca a lista de eventos sempre do Orquestrador.
+        for (Evento evento : this.orquestrador.listarTodosEventos()) {
+            modeloListaEventos.addElement(evento);
+        }
     }
 
     private void adicionarNovoEvento() {
         Frame framePrincipal = (Frame) SwingUtilities.getWindowAncestor(this);
+        // MUDANÇA: O diálogo também precisará do orquestrador se ele realizar alguma validação.
         DialogoEvento dialogo = new DialogoEvento(framePrincipal, orquestrador);
         dialogo.setVisible(true);
 
         if (dialogo.foiSalvo()) {
-            exibirTodosOsEventos();
+            // MUDANÇA: O próprio diálogo já cadastrou o evento através do Orquestrador.
+            // Apenas precisamos atualizar a nossa lista para refletir a mudança.
+            popularListaEventos();
+            // Opcional: selecionar o novo item, mas requer que o diálogo o retorne.
+            // listaDeEventos.setSelectedValue(dialogo.getEvento(), true);
         }
     }
 
@@ -118,11 +107,13 @@ public class PainelEventos extends PainelBase {
         }
 
         Frame framePrincipal = (Frame) SwingUtilities.getWindowAncestor(this);
+        // MUDANÇA: O diálogo de edição precisa do Orquestrador para salvar as alterações.
         DialogoEvento dialogo = new DialogoEvento(framePrincipal, orquestrador, eventoSelecionado);
         dialogo.setVisible(true);
 
         if (dialogo.foiSalvo()) {
-            exibirTodosOsEventos();
+            // MUDANÇA: O diálogo salvou a edição, então só precisamos atualizar a exibição.
+            popularListaEventos();
         }
     }
 
@@ -138,8 +129,10 @@ public class PainelEventos extends PainelBase {
                 "Confirmar Exclusão", JOptionPane.YES_NO_OPTION);
 
         if (confirmacao == JOptionPane.YES_OPTION) {
+            // MUDANÇA: Delega a exclusão para o Orquestrador.
             this.orquestrador.excluirEvento(eventoSelecionado);
-            exibirTodosOsEventos();
+            // MUDANÇA: Atualiza a lista após a exclusão.
+            popularListaEventos();
         }
     }
 }
