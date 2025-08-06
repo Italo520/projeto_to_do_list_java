@@ -49,11 +49,10 @@ public class PainelTarefas extends PainelBase {
 
     @Override
     protected JPanel criarPainelDeConteudo() {
-        // --- Painel Esquerdo: Lista de Tarefas ---
         modeloListaTarefas = new DefaultListModel<>();
         listaDeTarefas = new JList<>(modeloListaTarefas);
         listaDeTarefas.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-        // Adiciona um listener para atualizar as subtarefas quando uma tarefa é selecionada
+        
         listaDeTarefas.addListSelectionListener(e -> {
             if (!e.getValueIsAdjusting()) {
                 atualizarListaSubtarefas(listaDeTarefas.getSelectedValue());

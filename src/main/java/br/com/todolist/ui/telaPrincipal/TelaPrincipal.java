@@ -1,4 +1,3 @@
-// Em: src/main/java/br/com/todolist/ui/telaPrincipal/TelaPrincipal.java
 package br.com.todolist.ui.telaPrincipal;
 
 
@@ -25,11 +24,9 @@ public class TelaPrincipal extends JFrame {
 
     private void configurarJanela() {
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        // 1. TAMANHO DA JANELA ALTERADO
         setSize(1280, 720);
         setResizable(false);
         setLocationRelativeTo(null);
-        // Garante que o layout nulo se aplique ao painel de conteúdo
         setLayout(null);
     }
 
