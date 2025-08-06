@@ -1,24 +1,23 @@
 // Em: src/main/java/br/com/todolist/ui/telaPrincipal/TelaPrincipal.java
 package br.com.todolist.ui.telaPrincipal;
 
-import java.awt.BorderLayout;
-import java.util.List; // MUDANÇA: Import necessário
+import java.awt.BorderLayout; // Mantido apenas para referência, mas não será usado
+import java.util.List;
 import javax.swing.JFrame;
 import javax.swing.JTabbedPane;
-import br.com.todolist.models.Tarefa; // MUDANÇA: Import necessário
+import br.com.todolist.models.Tarefa;
 import br.com.todolist.models.Usuario;
 import br.com.todolist.service.Orquestrador;
 
 public class TelaPrincipal extends JFrame {
 
     private Orquestrador orquestrador;
-    // MUDANÇA: Transformando os painéis em campos da classe
     private PainelTarefas painelTarefas;
     private PainelEventos painelEventos;
     private JTabbedPane painelComAbas;
 
     public TelaPrincipal(Usuario usuarioLogado) {
-        super("ToDoLIst - Usuário: " + usuarioLogado.getNome());
+        super("Usuário: " + usuarioLogado.getNome());
         this.orquestrador = new Orquestrador(usuarioLogado);
         configurarJanela();
         montarLayout();
@@ -26,22 +25,26 @@ public class TelaPrincipal extends JFrame {
 
     private void configurarJanela() {
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        setSize(800, 600);
+        // 1. TAMANHO DA JANELA ALTERADO
+        setSize(1280, 720);
+        setResizable(false);
         setLocationRelativeTo(null);
+        // Garante que o layout nulo se aplique ao painel de conteúdo
+        setLayout(null);
     }
 
     private void montarLayout() {
         setJMenuBar(BarraFerramentas.criarBarraFerramentas(this, this.orquestrador));
-        
-        criarPaineis();
 
-        setLayout(new BorderLayout());
-        add(painelComAbas, BorderLayout.CENTER);
+        criarPaineis();
+        painelComAbas.setBounds(5, 5, 1270, 650);
+
+        add(painelComAbas);
     }
 
     private void criarPaineis() {
         painelComAbas = new JTabbedPane();
-        
+
         this.painelTarefas = new PainelTarefas(this.orquestrador);
         this.painelEventos = new PainelEventos(this.orquestrador);
 
@@ -50,7 +53,6 @@ public class TelaPrincipal extends JFrame {
     }
 
     public void atualizarPainelDeTarefas(List<Tarefa> tarefas) {
-
         painelComAbas.setSelectedComponent(painelTarefas);
         painelTarefas.exibirTarefasDoDia(tarefas);
     }

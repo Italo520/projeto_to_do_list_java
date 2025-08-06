@@ -1,22 +1,17 @@
-// Em: src/main/java/br/com/todolist/ui/telaPrincipal/BarraFerramentas.java
 package br.com.todolist.ui.telaPrincipal;
 
 import br.com.todolist.models.Tarefa;
-import br.com.todolist.service.Orquestrador; // MUDANÇA: Import necessário
+import br.com.todolist.service.Orquestrador;
 import br.com.todolist.ui.TelasDialogo.PadraoDialogo;
 
 import javax.swing.*;
-import java.awt.Dimension; // MUDANÇA: Import necessário
 import java.awt.event.ActionEvent;
 import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
-import java.time.format.DateTimeParseException;
-import java.util.List; // MUDANÇA: Import necessário
+import java.util.List;
 import java.util.Optional;
 
 public class BarraFerramentas {
 
-    // MUDANÇA: A assinatura do método agora precisa receber o Orquestrador.
     public static JMenuBar criarBarraFerramentas(JFrame frame, Orquestrador orquestrador) {
 
         JMenuBar menuBar = new JMenuBar();
@@ -26,6 +21,12 @@ public class BarraFerramentas {
         JMenu menuTarefas = new JMenu("Tarefas");
         JMenu menuEventos = new JMenu("Eventos");
         JMenu menuAjuda = new JMenu("Ajuda");
+
+        // Adiciona os menus à barra de menus principal
+        menuBar.add(menuArquivo);
+        menuBar.add(menuTarefas);
+        menuBar.add(menuEventos);
+        menuBar.add(menuAjuda);
 
         // --- Itens do Menu Arquivo ---
 
@@ -85,8 +86,7 @@ public class BarraFerramentas {
         }
     });
 });
-          
-        
+           
 
         // Adiciona os itens aos seus respectivos menus
         menuArquivo.add(itemSair);
@@ -98,15 +98,6 @@ public class BarraFerramentas {
         menuTarefas.add(relatorioTarefasPorMes);
         menuEventos.add(listarEventosProDia);
         menuEventos.add(listarEventosMesEspecifico);
-
-
-
-
-        // Adiciona os menus à barra de menus principal
-        menuBar.add(menuArquivo);
-        menuBar.add(menuTarefas);
-        menuBar.add(menuEventos);
-        menuBar.add(menuAjuda);
 
         return menuBar;
     }
