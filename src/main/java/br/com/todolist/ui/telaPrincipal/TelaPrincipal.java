@@ -1,7 +1,7 @@
 // Em: src/main/java/br/com/todolist/ui/telaPrincipal/TelaPrincipal.java
 package br.com.todolist.ui.telaPrincipal;
 
-import java.awt.BorderLayout; // Mantido apenas para referência, mas não será usado
+
 import java.util.List;
 import javax.swing.JFrame;
 import javax.swing.JTabbedPane;
