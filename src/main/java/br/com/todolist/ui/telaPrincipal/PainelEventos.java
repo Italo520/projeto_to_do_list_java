@@ -1,23 +1,30 @@
-// Conteúdo para: src/main/java/br/com/todolist/ui/telaPrincipal/PainelEventos.java
 package br.com.todolist.ui.telaPrincipal;
 
 import br.com.todolist.models.Evento;
-import br.com.todolist.service.Orquestrador; // MUDANÇA: Import do Orquestrador
+import br.com.todolist.service.Orquestrador;
 import br.com.todolist.ui.TelasDialogo.DialogoEvento;
 
 import javax.swing.*;
 import java.awt.*;
+// NOVO! Imports para lidar com datas.
+import java.time.LocalDate;
+import java.time.temporal.ChronoUnit;
 
 public class PainelEventos extends PainelBase {
 
-    // MUDANÇA: O Orquestrador é a nova fonte da verdade para os dados.
     private final Orquestrador orquestrador;
 
     private DefaultListModel<Evento> modeloListaEventos;
     private JList<Evento> listaDeEventos;
-    private JTextArea areaDescricao;
+    
+    // REMOVIDO/SUBSTITUÍDO: A JTextArea não é mais necessária.
+    // private JTextArea areaDescricao;
+    
+    // NOVO! Labels para os detalhes do evento.
+    private JLabel valorDescricao;
+    private JLabel valorTempoRestante;
 
-    // MUDANÇA: Construtor agora recebe o Orquestrador (Injeção de Dependência).
+
     public PainelEventos(Orquestrador orquestrador) {
         this.orquestrador = orquestrador;
         inicializarLayout();
@@ -25,8 +32,8 @@ public class PainelEventos extends PainelBase {
 
     @Override
     protected JPanel criarPainelDeBotoes() {
+        // (Este método não precisa de alterações)
         JPanel painel = new JPanel(new FlowLayout(FlowLayout.CENTER));
-        
         JButton botaoNovoEvento = new JButton("Novo Evento");
         JButton botaoEditarEvento = new JButton("Editar Evento");
         JButton botaoExcluirEvento = new JButton("Excluir Evento");
@@ -48,26 +55,42 @@ public class PainelEventos extends PainelBase {
         listaDeEventos = new JList<>(modeloListaEventos);
         listaDeEventos.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
         listaDeEventos.setBorder(BorderFactory.createTitledBorder("Eventos"));
-
-        areaDescricao = new JTextArea();
-        areaDescricao.setEditable(false);
-        areaDescricao.setWrapStyleWord(true);
-        areaDescricao.setLineWrap(true);
-        areaDescricao.setBorder(BorderFactory.createTitledBorder("Descrição"));
-
+        
+        // Listener da lista agora chama o método para atualizar os detalhes.
         listaDeEventos.addListSelectionListener(e -> {
             if (!e.getValueIsAdjusting()) {
                 Evento eventoSelecionado = listaDeEventos.getSelectedValue();
-                areaDescricao.setText(eventoSelecionado != null ? eventoSelecionado.getDescricao() : "");
+                atualizarDetalhesEvento(eventoSelecionado); // ATUALIZADO!
             }
         });
+        
+        // NOVO! Painel de detalhes para substituir a JTextArea.
+        JPanel painelDetalhes = new JPanel(new BorderLayout());
+        painelDetalhes.setBorder(BorderFactory.createTitledBorder("Detalhes do Evento"));
+        
+        // Painel interno para organizar os labels
+        JPanel painelCampos = new JPanel(new GridLayout(0, 2, 5, 5));
+        painelCampos.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
+        
+        valorDescricao = new JLabel();
+        valorTempoRestante = new JLabel();
+        
+        painelCampos.add(new JLabel("Descrição:"));
+        painelCampos.add(valorDescricao);
+        painelCampos.add(new JLabel("Tempo Restante:"));
+        painelCampos.add(valorTempoRestante);
+        
+        // Adiciona os campos ao painel de detalhes.
+        painelDetalhes.add(painelCampos, BorderLayout.NORTH);
 
-        // MUDANÇA: Carrega os eventos reais do Orquestrador ao iniciar.
+        // Carrega os eventos e inicializa os detalhes
         popularListaEventos();
 
         JSplitPane painelDividido = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT,
                 new JScrollPane(listaDeEventos),
-                new JScrollPane(areaDescricao));
+                // REMOVIDO/SUBSTITUÍDO: Troca a área de descrição pelo novo painel.
+                // new JScrollPane(areaDescricao));
+                painelDetalhes); // NOVO!
         painelDividido.setDividerLocation(300);
 
         JPanel painelDeConteudo = new JPanel(new BorderLayout());
@@ -76,12 +99,36 @@ public class PainelEventos extends PainelBase {
         return painelDeConteudo;
     }
 
+    // NOVO! Método que atualiza os detalhes na tela.
+    private void atualizarDetalhesEvento(Evento evento) {
+        if (evento != null) {
+            valorDescricao.setText("<html>" + evento.getDescricao() + "</html>"); // Usa HTML para quebra de linha
+            
+            long diasRestantes = ChronoUnit.DAYS.between(LocalDate.now(), evento.getDeadline());
+            String textoTempo;
+            if (diasRestantes > 1) {
+                textoTempo = "Faltam " + diasRestantes + " dias";
+            } else if (diasRestantes == 1) {
+                textoTempo = "Falta 1 dia";
+            } else if (diasRestantes == 0) {
+                textoTempo = "É hoje!";
+            } else {
+                textoTempo = "Atrasado";
+            }
+            valorTempoRestante.setText(textoTempo);
+        } else {
+            valorDescricao.setText("Selecione um evento");
+            valorTempoRestante.setText("-");
+        }
+    }
+
     private void popularListaEventos() {
         modeloListaEventos.clear();
-        // MUDANÇA: Busca a lista de eventos sempre do Orquestrador.
         for (Evento evento : this.orquestrador.listarTodosEventos()) {
             modeloListaEventos.addElement(evento);
         }
+        // NOVO! Limpa os detalhes ao popular a lista.
+        atualizarDetalhesEvento(null);
     }
 
     private void adicionarNovoEvento() {

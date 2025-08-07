@@ -13,15 +13,7 @@ public class Evento extends Itens {
     }
 
     public String toString() {
-        long diasRestantes = ChronoUnit.DAYS.between(LocalDate.now(), getDeadline());
-
-        if (diasRestantes > 0) {
-            return getTitulo() + " (Faltam " + diasRestantes + " dias)";
-        } else if (diasRestantes == 0) {
-            return getTitulo() + " (É hoje!)";
-        } else {
-            return getTitulo() + " (Atrasado)";
-        }
+        return getTitulo();
     }
 
     public String getTitulo() {
