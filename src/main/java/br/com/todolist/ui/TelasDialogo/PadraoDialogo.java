@@ -11,11 +11,7 @@ import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
 import java.util.Optional;
 
-/**
- * Classe utilitária (fábrica) para criar diálogos padrão de forma consistente
- * em todo o aplicativo.
- * * Esta classe não pode ser instanciada nem herdada.
- */
+
 public final class PadraoDialogo {
 
     private static final DateTimeFormatter FORMATADOR_DATA = DateTimeFormatter.ofPattern("dd/MM/yyyy");
