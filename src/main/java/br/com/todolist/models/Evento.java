@@ -1,7 +1,6 @@
 package br.com.todolist.models;
 
 import java.time.LocalDate;
-import java.time.temporal.ChronoUnit;
 
 public class Evento extends Itens {
 
