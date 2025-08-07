@@ -8,6 +8,9 @@ import br.com.todolist.ui.TelasDialogo.DialogoTarefa;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 
 public class PainelTarefas extends PainelBase {
@@ -19,6 +22,14 @@ public class PainelTarefas extends PainelBase {
     private JList<Tarefa> listaDeTarefas;
     private JList<Subtarefa> listaDeSubtarefas;
 
+    private JLabel valorDescricao;
+    private JLabel valorPrioridade;
+    private JLabel valorPrazo;
+    // NOVO! Label para o percentual de conclusão.
+    private JLabel valorConclusao;
+    
+    private final DateTimeFormatter formatadorDeData = DateTimeFormatter.ofPattern("dd/MM/yyyy");
+
     public PainelTarefas(Orquestrador orquestrador) {
         super();
         this.orquestrador = orquestrador;
@@ -27,23 +38,18 @@ public class PainelTarefas extends PainelBase {
 
     @Override
     protected JPanel criarPainelDeBotoes() {
+        // (Este método não precisa de alterações)
         JPanel painel = new JPanel(new FlowLayout(FlowLayout.CENTER));
         painel.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
-
         JButton botaoNovaTarefa = new JButton("Nova Tarefa");
         JButton botaoEditarTarefa = new JButton("Editar Tarefa");
         JButton botaoExcluirTarefa = new JButton("Excluir Tarefa");
-
-
         botaoNovaTarefa.addActionListener(e -> adicionarNovaTarefa());
         botaoEditarTarefa.addActionListener(e -> editarTarefaSelecionada());
         botaoExcluirTarefa.addActionListener(e -> excluirTarefaSelecionada());
-
-
         painel.add(botaoNovaTarefa);
         painel.add(botaoEditarTarefa);
         painel.add(botaoExcluirTarefa);
-
         return painel;
     }
 
@@ -52,34 +58,72 @@ public class PainelTarefas extends PainelBase {
         modeloListaTarefas = new DefaultListModel<>();
         listaDeTarefas = new JList<>(modeloListaTarefas);
         listaDeTarefas.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-        
+
         listaDeTarefas.addListSelectionListener(e -> {
             if (!e.getValueIsAdjusting()) {
-                atualizarListaSubtarefas(listaDeTarefas.getSelectedValue());
+                Tarefa tarefaSelecionada = listaDeTarefas.getSelectedValue();
+                atualizarListaSubtarefas(tarefaSelecionada);
+                atualizarDetalhesTarefa(tarefaSelecionada);
             }
         });
         JScrollPane scrollTarefas = new JScrollPane(listaDeTarefas);
         scrollTarefas.setBorder(BorderFactory.createTitledBorder("Tarefas"));
 
-
         JPanel painelDireito = new JPanel(new BorderLayout(5, 5));
-        painelDireito.setBorder(BorderFactory.createTitledBorder("Subtarefas"));
+        painelDireito.setBorder(BorderFactory.createTitledBorder("Subtarefas e Detalhes"));
+
+        // ATUALIZADO! O GridLayout agora terá 4 linhas para acomodar o novo campo.
+        JPanel painelDetalhes = new JPanel(new GridLayout(0, 2, 5, 5));
+        painelDetalhes.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
+
+        valorDescricao = new JLabel("N/D");
+        valorPrioridade = new JLabel("N/D");
+        valorPrazo = new JLabel("N/D");
+        // NOVO! Instancia o label de conclusão.
+        valorConclusao = new JLabel("N/D");
+        
+        painelDetalhes.add(new JLabel("Descrição:"));
+        painelDetalhes.add(valorDescricao);
+        painelDetalhes.add(new JLabel("Prioridade:"));
+        painelDetalhes.add(valorPrioridade);
+        painelDetalhes.add(new JLabel("Prazo:"));
+        painelDetalhes.add(valorPrazo);
+        // NOVO! Adiciona o título e o label de conclusão ao painel.
+        painelDetalhes.add(new JLabel("Conclusão:"));
+        painelDetalhes.add(valorConclusao);
+        
+        painelDireito.add(painelDetalhes, BorderLayout.NORTH);
 
         modeloListaSubtarefas = new DefaultListModel<>();
         listaDeSubtarefas = new JList<>(modeloListaSubtarefas);
+        listaDeSubtarefas.setCellRenderer(new SubtarefaCellRenderer());
+        listaDeSubtarefas.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                int index = listaDeSubtarefas.locationToIndex(e.getPoint());
+                if (index != -1) {
+                    Tarefa tarefaPai = listaDeTarefas.getSelectedValue();
+                    Subtarefa subtarefa = modeloListaSubtarefas.getElementAt(index);
+                    subtarefa.mudarStatus();
+                    if (tarefaPai != null) {
+                        orquestrador.atualizarTarefa(tarefaPai);
+                        // ATUALIZADO! Atualiza os detalhes para refletir o novo percentual.
+                        atualizarDetalhesTarefa(tarefaPai);
+                    }
+                    listaDeSubtarefas.repaint(listaDeSubtarefas.getCellBounds(index, index));
+                    listaDeTarefas.repaint();
+                }
+            }
+        });
         JScrollPane scrollSubtarefas = new JScrollPane(listaDeSubtarefas);
-        
-        // Botões para Subtarefas
+
         JPanel painelBotoesSubtarefa = new JPanel(new FlowLayout(FlowLayout.CENTER));
         JButton botaoNovaSubtarefa = new JButton("Nova Subtarefa");
         JButton botaoEditarSubtarefa = new JButton("Editar Subtarefa");
         JButton botaoExcluirSubtarefa = new JButton("Excluir Subtarefa");
-        
-        // Adicionando ações aos botões de subtarefa
         botaoNovaSubtarefa.addActionListener(e -> adicionarNovaSubtarefa());
         botaoEditarSubtarefa.addActionListener(e -> editarSubtarefaSelecionada());
         botaoExcluirSubtarefa.addActionListener(e -> excluirSubtarefaSelecionada());
-
         painelBotoesSubtarefa.add(botaoNovaSubtarefa);
         painelBotoesSubtarefa.add(botaoEditarSubtarefa);
         painelBotoesSubtarefa.add(botaoExcluirSubtarefa);
@@ -87,16 +131,28 @@ public class PainelTarefas extends PainelBase {
         painelDireito.add(scrollSubtarefas, BorderLayout.CENTER);
         painelDireito.add(painelBotoesSubtarefa, BorderLayout.SOUTH);
 
-
         JSplitPane splitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, scrollTarefas, painelDireito);
         splitPane.setResizeWeight(0.5);
-
         JPanel painelConteudo = new JPanel(new BorderLayout());
         painelConteudo.add(splitPane, BorderLayout.CENTER);
-
         popularListaTarefas();
-
         return painelConteudo;
+    }
+
+    private void atualizarDetalhesTarefa(Tarefa tarefa) {
+        if (tarefa != null) {
+            valorDescricao.setText(tarefa.getDescricao());
+            valorPrioridade.setText(String.valueOf(tarefa.getPrioridade()));
+            valorPrazo.setText(tarefa.getDeadline().format(formatadorDeData));
+            // NOVO! Calcula e exibe o percentual de conclusão.
+            valorConclusao.setText((int) tarefa.obterPercentual() + "%");
+        } else {
+            valorDescricao.setText("Selecione uma tarefa");
+            valorPrioridade.setText("-");
+            valorPrazo.setText("-");
+            // NOVO! Limpa o label de conclusão também.
+            valorConclusao.setText("-");
+        }
     }
 
     private void popularListaTarefas() {
@@ -106,7 +162,10 @@ public class PainelTarefas extends PainelBase {
             tarefas.forEach(modeloListaTarefas::addElement);
         }
         atualizarListaSubtarefas(null);
+        atualizarDetalhesTarefa(null);
     }
+    
+    // ... (o resto da classe permanece igual)
 
     private void adicionarNovaTarefa() {
         DialogoTarefa dialogo = new DialogoTarefa((Frame) SwingUtilities.getWindowAncestor(this), orquestrador);
@@ -150,7 +209,6 @@ public class PainelTarefas extends PainelBase {
             popularListaTarefas();
         }
     }
-    
 
     private void atualizarListaSubtarefas(Tarefa tarefa) {
         modeloListaSubtarefas.clear();
@@ -173,6 +231,7 @@ public class PainelTarefas extends PainelBase {
             orquestrador.atualizarTarefa(tarefaPai);
             
             atualizarListaSubtarefas(tarefaPai);
+            atualizarDetalhesTarefa(tarefaPai); // ATUALIZADO
             listaDeTarefas.repaint();
         }
     }
@@ -212,17 +271,17 @@ public class PainelTarefas extends PainelBase {
             orquestrador.atualizarTarefa(tarefaPai);
             
             atualizarListaSubtarefas(tarefaPai);
+            atualizarDetalhesTarefa(tarefaPai); // ATUALIZADO
             listaDeTarefas.repaint();
         }
     }
 
-    
     public void exibirTarefasDoDia(List<Tarefa> tarefasDoDia) {
-        modeloListaTarefas.clear(); // Limpa a lista visual
+        modeloListaTarefas.clear();
         if (tarefasDoDia != null) {
             tarefasDoDia.forEach(modeloListaTarefas::addElement);
         }
-        // Limpa as subtarefas, pois a seleção de tarefa foi perdida
         atualizarListaSubtarefas(null);
+        atualizarDetalhesTarefa(null);
     }
 }

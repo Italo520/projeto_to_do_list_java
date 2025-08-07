@@ -66,6 +66,6 @@ public class Tarefa extends Itens {
     }
 
     public String toString() {
-        return getTitulo() + " (Conclusão da Tarefa: " + (int) obterPercentual() + "%)";
+        return getTitulo();
     }
 }
