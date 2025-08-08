@@ -8,7 +8,6 @@ public abstract class PainelBase extends JPanel {
 
     public PainelBase() {
         super();
-        // 1. O layout do painel base agora é NULO.
         setLayout(null); 
     }
 

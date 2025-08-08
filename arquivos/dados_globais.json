@@ -56,13 +56,13 @@
     "prioridade" : 4,
     "subtarefas" : [ {
       "titulo" : "Criar rota POST /clientes",
-      "status" : true
+      "status" : false
     }, {
       "titulo" : "Criar rota GET /clientes",
-      "status" : true
+      "status" : false
     }, {
       "titulo" : "Criar rota PUT /clientes/:id",
-      "status" : true
+      "status" : false
     } ]
   }, {
     "titulo" : "Escrever documentação da API de Autenticação",
@@ -303,6 +303,22 @@
     "dataConclusao" : null,
     "prioridade" : 3,
     "subtarefas" : [ ]
+  }, {
+    "titulo" : "Teste nova tarefa",
+    "descricao" : "testando a criação de nova tarefa",
+    "tipo" : "Tarefa",
+    "criado_por" : "1",
+    "dataCadastro" : [ 2025, 8, 8 ],
+    "deadline" : [ 2025, 8, 10 ],
+    "dataConclusao" : null,
+    "prioridade" : 5,
+    "subtarefas" : [ {
+      "titulo" : "teste de subtarefa1",
+      "status" : false
+    }, {
+      "titulo" : "teste de subtarefa2",
+      "status" : true
+    } ]
   } ],
   "eventos" : [ {
     "titulo" : "Feriado Municipal - Aniversário da Cidade",
@@ -487,13 +503,6 @@
     "dataCadastro" : [ 2025, 9, 1 ],
     "deadline" : [ 2025, 9, 15 ]
   }, {
-    "titulo" : "Reunião Geral (All-Hands)",
-    "descricao" : "Reunião com toda a empresa para atualizações gerais.",
-    "tipo" : "Evento",
-    "criado_por" : "1",
-    "dataCadastro" : [ 2025, 9, 1 ],
-    "deadline" : [ 2025, 9, 19 ]
-  }, {
     "titulo" : "Apresentação de Resultados do Q3",
     "descricao" : "Reunião com a diretoria para apresentar as métricas do trimestre.",
     "tipo" : "Apresentação",
@@ -514,5 +523,19 @@
     "criado_por" : "1",
     "dataCadastro" : [ 2025, 9, 1 ],
     "deadline" : [ 2025, 10, 10 ]
+  }, {
+    "titulo" : "teste de evento",
+    "descricao" : "testando funções eventos",
+    "tipo" : "Evento",
+    "criado_por" : "1",
+    "dataCadastro" : [ 2025, 8, 8 ],
+    "deadline" : [ 2025, 8, 10 ]
+  }, {
+    "titulo" : "teste",
+    "descricao" : "123",
+    "tipo" : "Evento",
+    "criado_por" : "1",
+    "dataCadastro" : [ 2025, 8, 8 ],
+    "deadline" : [ 2025, 8, 20 ]
   } ]
 }

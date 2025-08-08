@@ -121,6 +121,7 @@ public class PainelTarefas extends PainelBase {
         JButton botaoNovaSubtarefa = new JButton("Nova Subtarefa");
         JButton botaoEditarSubtarefa = new JButton("Editar Subtarefa");
         JButton botaoExcluirSubtarefa = new JButton("Excluir Subtarefa");
+        
         botaoNovaSubtarefa.addActionListener(e -> adicionarNovaSubtarefa());
         botaoEditarSubtarefa.addActionListener(e -> editarSubtarefaSelecionada());
         botaoExcluirSubtarefa.addActionListener(e -> excluirSubtarefaSelecionada());
@@ -164,8 +165,6 @@ public class PainelTarefas extends PainelBase {
         atualizarListaSubtarefas(null);
         atualizarDetalhesTarefa(null);
     }
-    
-    // ... (o resto da classe permanece igual)
 
     private void adicionarNovaTarefa() {
         DialogoTarefa dialogo = new DialogoTarefa((Frame) SwingUtilities.getWindowAncestor(this), orquestrador);

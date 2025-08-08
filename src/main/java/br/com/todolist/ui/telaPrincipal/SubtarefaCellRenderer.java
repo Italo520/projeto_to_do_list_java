@@ -1,4 +1,4 @@
-package br.com.todolist.ui.telaPrincipal; // Ou um pacote de sua preferência
+package br.com.todolist.ui.telaPrincipal;
 
 import br.com.todolist.models.Subtarefa;
 import java.awt.BorderLayout;
@@ -8,11 +8,7 @@ import javax.swing.JList;
 import javax.swing.JPanel;
 import javax.swing.ListCellRenderer;
 
-/**
- * Esta classe é responsável por "desenhar" cada item da JList de subtarefas.
- * Ela usa um JCheckBox para exibir o título e o status (marcado/desmarcado)
- * da subtarefa.
- */
+
 public class SubtarefaCellRenderer extends JPanel implements ListCellRenderer<Subtarefa> {
 
     private final JCheckBox checkBox;
@@ -26,16 +22,13 @@ public class SubtarefaCellRenderer extends JPanel implements ListCellRenderer<Su
         add(checkBox, BorderLayout.CENTER);
     }
 
-    @Override
     public Component getListCellRendererComponent(JList<? extends Subtarefa> list,
                                                   Subtarefa subtarefa,
                                                   int index,
                                                   boolean isSelected,
                                                   boolean cellHasFocus) {
 
-        // Configura o componente com os dados da subtarefa atual
         checkBox.setText(subtarefa.getTitulo());
-        // A classe Subtarefa já tem um método 'isStatus'
         checkBox.setSelected(subtarefa.isStatus());
 
         // Define as cores de fundo e da fonte com base na seleção da lista

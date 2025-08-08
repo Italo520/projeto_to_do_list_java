@@ -12,104 +12,94 @@ public class TelaCadastro extends JDialog {
     private JPasswordField campoSenha;
     private JButton botaoCadastrar;
     private JButton botaoCancelar;
-    
+
     private final GerenteDeUsuarios gerenteDeUsuarios;
 
-    public TelaCadastro(Frame owner, GerenteDeUsuarios gerenteDeUsuarios) {
-        super(owner, "Criar Nova Conta", true);
+    public TelaCadastro(Frame telalogin, GerenteDeUsuarios gerenteDeUsuarios) {
+        super(telalogin, "Criar Nova Conta", true);
         this.gerenteDeUsuarios = gerenteDeUsuarios;
 
-        montarLayoutComGridBag();
+        configurarLayout();
         configurarAcoes();
-
-        pack();
-        setResizable(false);
-        setLocationRelativeTo(owner);
+        setVisible(true);
     }
 
-    private void montarLayoutComGridBag() {
+    private void configurarLayout() {
+        setTitle("Criar Nova Conta");
+        setSize(1280, 720);
+        setResizable(false);
+        setLayout(null);
 
-        setLayout(new GridBagLayout());
-        GridBagConstraints gbc = new GridBagConstraints();
-        
-        gbc.insets = new Insets(5, 5, 5, 5);
-        gbc.fill = GridBagConstraints.HORIZONTAL;
+        // Campo Nome
+        JLabel labelNome = new JLabel("Nome:");
+        labelNome.setBounds(440, 230, 100, 30);
+        add(labelNome);
 
-        gbc.gridx = 0;
-        gbc.gridy = 0;
-        gbc.anchor = GridBagConstraints.EAST;
-        add(new JLabel("Nome:"), gbc);
+        campoNome = new JTextField();
+        campoNome.setBounds(550, 230, 250, 30);
+        add(campoNome);
 
-        gbc.gridx = 1;
-        gbc.gridy = 0;
-        gbc.gridwidth = 2;
-        gbc.anchor = GridBagConstraints.WEST;
-        campoNome = new JTextField(20);
-        add(campoNome, gbc);
-        
-        gbc.gridx = 0;
-        gbc.gridy = 1;
-        gbc.gridwidth = 1;
-        gbc.anchor = GridBagConstraints.EAST;
-        add(new JLabel("Email:"), gbc);
+        // Campo Email
+        JLabel labelEmail = new JLabel("Email:");
+        labelEmail.setBounds(440, 275, 100, 30);
+        add(labelEmail);
 
-        gbc.gridx = 1;
-        gbc.gridy = 1;
-        gbc.gridwidth = 2;
-        gbc.anchor = GridBagConstraints.WEST;
-        campoEmail = new JTextField(20);
-        add(campoEmail, gbc);
+        campoEmail = new JTextField();
+        campoEmail.setBounds(550, 275, 250, 30);
+        add(campoEmail);
 
-        gbc.gridx = 0;
-        gbc.gridy = 2;
-        gbc.gridwidth = 1;
-        gbc.anchor = GridBagConstraints.EAST;
-        add(new JLabel("Senha:"), gbc);
+        // Campo Senha
+        JLabel labelSenha = new JLabel("Senha:");
+        labelSenha.setBounds(440, 320, 100, 30);
+        add(labelSenha);
 
-        gbc.gridx = 1;
-        gbc.gridy = 2;
-        gbc.gridwidth = 2;
-        gbc.anchor = GridBagConstraints.WEST;
-        campoSenha = new JPasswordField(20);
-        add(campoSenha, gbc);
+        campoSenha = new JPasswordField();
+        campoSenha.setBounds(550, 320, 250, 30);
+        add(campoSenha);
 
-        JPanel painelBotoes = new JPanel(new FlowLayout(FlowLayout.RIGHT));
+        // Botoes
         botaoCadastrar = new JButton("Cadastrar");
+        botaoCadastrar.setBounds(550, 380, 120, 30);
+        add(botaoCadastrar);
+
         botaoCancelar = new JButton("Cancelar");
-
-        painelBotoes.add(botaoCadastrar);
-        painelBotoes.add(botaoCancelar);
-
-
-        gbc.gridx = 0;
-        gbc.gridy = 3;
-        gbc.gridwidth = 3;
-        gbc.fill = GridBagConstraints.NONE;
-        gbc.anchor = GridBagConstraints.CENTER;
-        add(painelBotoes, gbc);
+        botaoCancelar.setBounds(680, 380, 120, 30);
+        add(botaoCancelar);
     }
 
     private void configurarAcoes() {
-        botaoCancelar.addActionListener(e -> dispose());
+        botaoCadastrar.addActionListener(new CadastrarAction());
+        botaoCancelar.addActionListener(new OuvinteBotaoCancelar());
+    }
 
-        botaoCadastrar.addActionListener(e -> {
+
+    private class CadastrarAction implements java.awt.event.ActionListener {
+        @Override
+        public void actionPerformed(java.awt.event.ActionEvent e) {
             String nome = campoNome.getText();
             String email = campoEmail.getText();
             String senha = new String(campoSenha.getPassword());
 
             if (nome.trim().isEmpty() || email.trim().isEmpty() || senha.trim().isEmpty()) {
-                JOptionPane.showMessageDialog(this, "Todos os campos são obrigatórios.", "Erro de Validação", JOptionPane.ERROR_MESSAGE);
+                JOptionPane.showMessageDialog(TelaCadastro.this, "Todos os campos são obrigatórios.", "Erro de Validação", JOptionPane.ERROR_MESSAGE);
                 return;
             }
 
             boolean sucesso = gerenteDeUsuarios.criarNovoUsuario(nome, email, senha);
 
             if (sucesso) {
-                JOptionPane.showMessageDialog(this, "Usuário cadastrado com sucesso!", "Sucesso", JOptionPane.INFORMATION_MESSAGE);
+                JOptionPane.showMessageDialog(TelaCadastro.this, "Usuário cadastrado com sucesso!", "Sucesso", JOptionPane.INFORMATION_MESSAGE);
                 dispose();
             } else {
-                JOptionPane.showMessageDialog(this, "Este email já está em uso. Tente outro.", "Erro no Cadastro", JOptionPane.ERROR_MESSAGE);
+                JOptionPane.showMessageDialog(TelaCadastro.this, "Este email já está em uso. Tente outro.", "Erro no Cadastro", JOptionPane.ERROR_MESSAGE);
             }
-        });
+        }
+    }
+
+
+    private class OuvinteBotaoCancelar implements java.awt.event.ActionListener {
+        public void actionPerformed(java.awt.event.ActionEvent e) {
+            dispose();
+        }
     }
 }

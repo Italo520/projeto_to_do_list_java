@@ -25,76 +25,63 @@ public class DialogoEvento extends JDialog {
     private boolean salvo = false;
     private final DateTimeFormatter formatadorDeData = DateTimeFormatter.ofPattern("dd/MM/yyyy");
 
-    // Construtor para um novo evento
-    public DialogoEvento(Frame owner, Orquestrador orquestrador) {
-        super(owner, "Novo Evento", true);
+    public DialogoEvento(Frame frame, Orquestrador orquestrador) {
+        super(frame, "Novo Evento", true);
         this.orquestrador = orquestrador;
         this.evento = null;
-        montarLayout();
+        configurarEAdicionarComponentes();
         configurarAcoes();
-        pack();
-        setLocationRelativeTo(owner);
     }
 
-    // Construtor para editar um evento existente
-    public DialogoEvento(Frame owner, Orquestrador orquestrador, Evento eventoParaEditar) {
-        super(owner, "Editar Evento", true);
+    public DialogoEvento(Frame frame, Orquestrador orquestrador, Evento eventoParaEditar) {
+        super(frame, "Editar Evento", true);
         this.orquestrador = orquestrador;
         this.evento = eventoParaEditar;
-        montarLayout();
+        configurarEAdicionarComponentes();
         preencherCampos();
         configurarAcoes();
-        pack();
-        setLocationRelativeTo(owner);
     }
+    
+    private void configurarEAdicionarComponentes() {
+        setTitle(evento == null ? "Novo Evento" : "Editar Evento");
+        setSize(1280, 720);
+        setResizable(false);
+        setLayout(null);
+        setLocationRelativeTo(null);
 
-    private void montarLayout() {
-        setLayout(new GridBagLayout());
-        GridBagConstraints gbc = new GridBagConstraints();
-        gbc.insets = new Insets(5, 5, 5, 5);
-        gbc.fill = GridBagConstraints.HORIZONTAL;
+        JLabel labelTitulo = new JLabel("Título:");
+        labelTitulo.setBounds(400, 230, 100, 30);
+        add(labelTitulo);
 
-        gbc.gridx = 0;
-        gbc.gridy = 0;
-        add(new JLabel("Título:"), gbc);
-        gbc.gridx = 1;
-        gbc.gridy = 0;
-        gbc.gridwidth = 2;
-        campoTitulo = new JTextField(25);
-        add(campoTitulo, gbc);
+        campoTitulo = new JTextField();
+        campoTitulo.setBounds(600, 230, 400 , 30);
+        add(campoTitulo);
 
-        gbc.gridx = 0;
-        gbc.gridy = 1;
-        add(new JLabel("Descrição:"), gbc);
-        gbc.gridx = 1;
-        gbc.gridy = 1;
-        gbc.gridwidth = 2;
-        campoDescricao = new JTextField(25);
-        add(campoDescricao, gbc);
+        JLabel labelDescricao = new JLabel("Descrição:");
+        labelDescricao.setBounds(400, 275, 100, 30);
+        add(labelDescricao);
 
-        gbc.gridx = 0;
-        gbc.gridy = 2;
-        gbc.gridwidth = 1;
-        add(new JLabel("Deadline (dd/MM/yyyy):"), gbc);
-        gbc.gridx = 1;
-        gbc.gridy = 2;
-        gbc.gridwidth = 2;
-        campoData = new JTextField(10);
-        add(campoData, gbc);
+        campoDescricao = new JTextField();
+        campoDescricao.setBounds(600, 275, 400, 30);
+        add(campoDescricao);
 
-        JPanel painelBotoes = new JPanel(new FlowLayout(FlowLayout.CENTER));
+        JLabel labelPrazo = new JLabel("Deadline (dd/MM/yyyy):");
+        labelPrazo.setBounds(400, 320, 150, 30);
+        add(labelPrazo);
+
+        campoData = new JTextField();
+        campoData.setBounds(600, 320, 400, 30);
+        add(campoData);
+
         botaoSalvar = new JButton("Salvar");
+        botaoSalvar.setBounds(600, 425, 120, 30);
+        add(botaoSalvar);
+
         botaoCancelar = new JButton("Cancelar");
-        painelBotoes.add(botaoSalvar);
-        painelBotoes.add(botaoCancelar);
-
-        gbc.gridx = 0;
-        gbc.gridy = 3;
-        gbc.gridwidth = 3;
-        gbc.fill = GridBagConstraints.NONE;
-        add(painelBotoes, gbc);
+        botaoCancelar.setBounds(750, 425, 120, 30);
+        add(botaoCancelar);
     }
-
+    
     private void preencherCampos() {
         if (evento != null) {
             campoTitulo.setText(evento.getTitulo());
@@ -119,7 +106,6 @@ public class DialogoEvento extends JDialog {
 
         try {
             if (this.evento == null) {
-                // CORREÇÃO: Chama o novo método do orquestrador com os parâmetros
                 boolean sucesso = orquestrador.cadastrarEvento(titulo, descricao, deadline);
                 if (!sucesso) {
                     JOptionPane.showMessageDialog(this,
