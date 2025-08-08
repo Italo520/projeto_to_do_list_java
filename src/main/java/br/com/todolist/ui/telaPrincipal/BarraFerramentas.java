@@ -1,4 +1,3 @@
-// Em: src/main/java/br/com/todolist/ui/telaPrincipal/BarraFerramentas.java
 package br.com.todolist.ui.telaPrincipal;
 
 import br.com.todolist.models.Evento;
