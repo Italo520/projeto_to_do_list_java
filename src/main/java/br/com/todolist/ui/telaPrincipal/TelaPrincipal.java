@@ -1,9 +1,11 @@
+// src/main/java/br/com/todolist/ui/telaPrincipal/TelaPrincipal.java
 package br.com.todolist.ui.telaPrincipal;
 
 
 import java.util.List;
 import javax.swing.JFrame;
 import javax.swing.JTabbedPane;
+import br.com.todolist.models.Evento; // NOVO IMPORT
 import br.com.todolist.models.Tarefa;
 import br.com.todolist.models.Usuario;
 import br.com.todolist.service.Orquestrador;
@@ -31,6 +33,7 @@ public class TelaPrincipal extends JFrame {
     }
 
     private void montarLayout() {
+        // Passamos a própria instância da TelaPrincipal (this)
         setJMenuBar(BarraFerramentas.criarBarraFerramentas(this, this.orquestrador));
 
         criarPaineis();
@@ -52,5 +55,14 @@ public class TelaPrincipal extends JFrame {
     public void atualizarPainelDeTarefas(List<Tarefa> tarefas) {
         painelComAbas.setSelectedComponent(painelTarefas);
         painelTarefas.exibirTarefasDoDia(tarefas);
+    }
+
+    /**
+     * NOVO MÉTODO: Muda para a aba de eventos e exibe a lista fornecida.
+     * @param eventos A lista de eventos a ser exibida.
+     */
+    public void atualizarPainelDeEventos(List<Evento> eventos) {
+        painelComAbas.setSelectedComponent(painelEventos);
+        painelEventos.exibirEventos(eventos);
     }
 }
