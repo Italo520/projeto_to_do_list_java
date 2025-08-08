@@ -17,7 +17,6 @@ public class SubtarefaCellRenderer extends JPanel implements ListCellRenderer<Su
         setLayout(new BorderLayout());
         setOpaque(true);
         checkBox = new JCheckBox();
-        // Garante que o fundo do checkbox seja transparente para herdar a cor do painel
         checkBox.setOpaque(true);
         add(checkBox, BorderLayout.CENTER);
     }
@@ -31,7 +30,6 @@ public class SubtarefaCellRenderer extends JPanel implements ListCellRenderer<Su
         checkBox.setText(subtarefa.getTitulo());
         checkBox.setSelected(subtarefa.isStatus());
 
-        // Define as cores de fundo e da fonte com base na seleção da lista
         if (isSelected) {
             setBackground(list.getSelectionBackground());
             setForeground(list.getSelectionForeground());

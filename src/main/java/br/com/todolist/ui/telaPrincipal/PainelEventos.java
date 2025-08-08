@@ -1,4 +1,3 @@
-// src/main/java/br/com/todolist/ui/telaPrincipal/PainelEventos.java
 package br.com.todolist.ui.telaPrincipal;
 
 import br.com.todolist.models.Evento;
@@ -13,7 +12,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
-import java.util.List; // NOVO IMPORT
+import java.util.List;
 
 public class PainelEventos extends PainelBase {
 
@@ -30,9 +29,6 @@ public class PainelEventos extends PainelBase {
         inicializarLayout();
     }
 
-    // ... (métodos criarPainelDeBotoes e criarPainelDeConteudo permanecem os mesmos) ...
-
-    @Override
     protected JPanel criarPainelDeBotoes() {
         JPanel painel = new JPanel(new FlowLayout(FlowLayout.CENTER));
         JButton botaoNovoEvento = new JButton("Novo Evento");
@@ -126,10 +122,9 @@ public class PainelEventos extends PainelBase {
         atualizarDetalhesEvento(null);
     }
     
-    // --- CLASSES INTERNAS NOMEADAS PARA LISTENERS ---
+    // OUVINTES
     
     private class OuvinteBotaoNovoEvento implements ActionListener {
-        @Override
         public void actionPerformed(ActionEvent e) {
             Frame framePrincipal = (Frame) SwingUtilities.getWindowAncestor(PainelEventos.this);
             DialogoEvento dialogo = new DialogoEvento(framePrincipal, orquestrador);
@@ -142,7 +137,6 @@ public class PainelEventos extends PainelBase {
     }
 
     private class OuvinteBotaoEditarEvento implements ActionListener {
-        @Override
         public void actionPerformed(ActionEvent e) {
             Evento eventoSelecionado = listaDeEventos.getSelectedValue();
             if (eventoSelecionado == null) {
@@ -161,7 +155,6 @@ public class PainelEventos extends PainelBase {
     }
 
     private class OuvinteBotaoExcluirEvento implements ActionListener {
-        @Override
         public void actionPerformed(ActionEvent e) {
             Evento eventoSelecionado = listaDeEventos.getSelectedValue();
             if (eventoSelecionado == null) {
@@ -181,7 +174,6 @@ public class PainelEventos extends PainelBase {
     }
 
     private class OuvinteSelecaoEvento implements ListSelectionListener {
-        @Override
         public void valueChanged(ListSelectionEvent e) {
             if (!e.getValueIsAdjusting()) {
                 Evento eventoSelecionado = listaDeEventos.getSelectedValue();

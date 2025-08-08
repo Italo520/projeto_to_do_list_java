@@ -22,32 +22,28 @@ public class BarraFerramentas {
     private static final DateTimeFormatter FORMATADOR_DATA = DateTimeFormatter.ofPattern("dd/MM/yyyy");
     private static final DateTimeFormatter FORMATADOR_MES_ANO = DateTimeFormatter.ofPattern("MM/yyyy");
 
-    // Alteramos o tipo do primeiro parâmetro de JFrame para TelaPrincipal
     public static JMenuBar criarBarraFerramentas(TelaPrincipal frame, Orquestrador orquestrador) {
         JMenuBar menuBar = new JMenuBar();
 
-        // Menus
         JMenu menuArquivo = new JMenu("Arquivo");
         JMenu menuTarefas = new JMenu("Tarefas");
         JMenu menuEventos = new JMenu("Eventos");
         JMenu menuAjuda = new JMenu("Ajuda");
 
-        // --- Itens do Menu Arquivo ---
+ 
         JMenuItem itemSair = new JMenuItem("Sair");
         itemSair.addActionListener(e -> {
             frame.dispose();
             System.exit(0);
         });
-        menuArquivo.add(itemSair);
 
-        // --- Itens do Menu Tarefas ---
+
         JMenuItem listarTarefasPorDia = new JMenuItem("Listar Tarefas por Dia");
         listarTarefasPorDia.addActionListener(new OuvinteListarTarefasPorDia(frame, orquestrador));
         
         JMenuItem listarTarefasCriticas = new JMenuItem("Listar Tarefas Críticas");
         listarTarefasCriticas.addActionListener(new OuvinteListarTarefasCriticas(frame, orquestrador));
 
-        // ... (outros itens de menu que não exibem listas) ...
         JMenuItem pdfDoDia = new JMenuItem("Gerar PDF das Tarefas do Dia");
         pdfDoDia.addActionListener(new OuvinteGerarPdfTarefas(frame, orquestrador));
 
@@ -56,7 +52,22 @@ public class BarraFerramentas {
         
         JMenuItem relatorioTarefasPorMes = new JMenuItem("Relatório de Tarefas por Mês (Excel)");
         relatorioTarefasPorMes.addActionListener(new OuvinteGerarExcelTarefas(frame, orquestrador));
+        
+        JMenuItem listarEventosPorDia = new JMenuItem("Listar Eventos por Dia");
+        listarEventosPorDia.addActionListener(new OuvinteListarEventosPorDia(frame, orquestrador));
+        
+        JMenuItem listarEventosMesEspecifico = new JMenuItem("Listar Eventos por Mês");
+        listarEventosMesEspecifico.addActionListener(new OuvinteListarEventosPorMes(frame, orquestrador));
 
+        JMenuItem itemSobre = new JMenuItem("Sobre");
+        itemSobre.addActionListener(e -> JOptionPane.showMessageDialog(frame,
+                "Aplicação de Lista de Tarefas\nVersão 1.0\nCriado Por: Italo, Rickson e Marcus",
+                "Sobre", JOptionPane.INFORMATION_MESSAGE));
+
+        menuAjuda.add(itemSobre);
+
+        menuEventos.add(listarEventosPorDia);
+        menuEventos.add(listarEventosMesEspecifico);
 
         menuTarefas.add(listarTarefasPorDia);
         menuTarefas.add(listarTarefasCriticas);
@@ -64,25 +75,9 @@ public class BarraFerramentas {
         menuTarefas.add(pdfDoDia);
         menuTarefas.add(enviarEmailTarefas);
         menuTarefas.add(relatorioTarefasPorMes);
-        
-        // --- Itens do Menu Eventos ---
-        JMenuItem listarEventosPorDia = new JMenuItem("Listar Eventos por Dia");
-        listarEventosPorDia.addActionListener(new OuvinteListarEventosPorDia(frame, orquestrador));
-        
-        JMenuItem listarEventosMesEspecifico = new JMenuItem("Listar Eventos por Mês");
-        listarEventosMesEspecifico.addActionListener(new OuvinteListarEventosPorMes(frame, orquestrador));
 
-        menuEventos.add(listarEventosPorDia);
-        menuEventos.add(listarEventosMesEspecifico);
-        
-        // --- Itens do Menu Ajuda ---
-        JMenuItem itemSobre = new JMenuItem("Sobre");
-        itemSobre.addActionListener(e -> JOptionPane.showMessageDialog(frame,
-                "Aplicação de Lista de Tarefas\nVersão 1.0\nCriado Por: Italo, Rickson e Marcus",
-                "Sobre", JOptionPane.INFORMATION_MESSAGE));
-        menuAjuda.add(itemSobre);
+        menuArquivo.add(itemSair);
 
-        // Adiciona os menus à barra
         menuBar.add(menuArquivo);
         menuBar.add(menuTarefas);
         menuBar.add(menuEventos);
@@ -90,8 +85,6 @@ public class BarraFerramentas {
 
         return menuBar;
     }
-    
-    // O método exibirResultados foi REMOVIDO pois não é mais necessário.
 
     private static Optional<LocalDate> obterDataDoUsuario(JFrame frame, String mensagem) {
         String dataInput = JOptionPane.showInputDialog(frame, mensagem);
@@ -119,7 +112,7 @@ public class BarraFerramentas {
         }
     }
 
-    // --- CLASSES INTERNAS ESTÁTICAS PARA OS LISTENERS ---
+    // OUVINTES
 
     private static class OuvinteListarTarefasPorDia implements ActionListener {
         private final TelaPrincipal frame;
@@ -129,7 +122,6 @@ public class BarraFerramentas {
             this.frame = frame;
             this.orquestrador = orquestrador;
         }
-        @Override
         public void actionPerformed(ActionEvent e) {
             obterDataDoUsuario(frame, "Digite a data para listar as tarefas (dd/MM/yyyy):")
                 .ifPresent(dia -> {
@@ -150,7 +142,6 @@ public class BarraFerramentas {
             this.frame = frame;
             this.orquestrador = orquestrador;
         }
-        @Override
         public void actionPerformed(ActionEvent e) {
             List<Tarefa> tarefas = orquestrador.listarTarefasCriticas();
             if (tarefas.isEmpty()) {
@@ -168,7 +159,6 @@ public class BarraFerramentas {
             this.frame = frame;
             this.orquestrador = orquestrador;
         }
-        @Override
         public void actionPerformed(ActionEvent e) {
             obterDataDoUsuario(frame, "Digite a data para listar os eventos (dd/MM/yyyy):")
                 .ifPresent(dia -> {
@@ -189,7 +179,6 @@ public class BarraFerramentas {
             this.frame = frame;
             this.orquestrador = orquestrador;
         }
-        @Override
         public void actionPerformed(ActionEvent e) {
             obterMesAnoDoUsuario(frame, "Digite o mês e ano (MM/yyyy):")
                 .ifPresent(mes -> {
@@ -202,7 +191,7 @@ public class BarraFerramentas {
         }
     }
     
-    // As classes de listener para gerar arquivos (PDF, Excel, Email) permanecem as mesmas
+
     private static class OuvinteGerarPdfTarefas implements ActionListener {
         private final JFrame frame;
         private final Orquestrador orquestrador;
@@ -211,7 +200,6 @@ public class BarraFerramentas {
             this.frame = frame;
             this.orquestrador = orquestrador;
         }
-        @Override
         public void actionPerformed(ActionEvent e) {
             obterDataDoUsuario(frame, "Digite a data para gerar o PDF (dd/MM/yyyy):")
                 .ifPresent(dia -> {
@@ -234,7 +222,6 @@ public class BarraFerramentas {
             this.frame = frame;
             this.orquestrador = orquestrador;
         }
-        @Override
         public void actionPerformed(ActionEvent e) {
             obterDataDoUsuario(frame, "Digite a data para o envio do relatório (dd/MM/yyyy):")
                 .ifPresent(dia -> {
@@ -255,7 +242,6 @@ public class BarraFerramentas {
             this.frame = frame;
             this.orquestrador = orquestrador;
         }
-        @Override
         public void actionPerformed(ActionEvent e) {
             obterMesAnoDoUsuario(frame, "Digite o mês e ano para o relatório (MM/yyyy):")
                 .ifPresent(mes -> {
