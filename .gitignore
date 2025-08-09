@@ -16,7 +16,7 @@
 Thumbs.db
 
 # Pasta de arquivos
-# arquivos/
+arquivos/*
 
 # Arquivos de front-end
 index.html
