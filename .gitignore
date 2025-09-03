@@ -1,0 +1,34 @@
+# Arquivos gerados pelo Maven
+/target/
+
+# Arquivos de log
+*.log
+
+# Arquivos de configuração de IDEs
+.idea/
+*.iml
+.classpath
+.project
+.settings/
+
+# Arquivos de sistema
+.DS_Store
+Thumbs.db
+
+# Pasta de arquivos
+arquivos/*
+
+# Arquivos de front-end
+index.html
+script.js
+styles.css
+qodana.yaml
+
+# Arquivos de build
+build/
+*.jar
+*.class
+
+# Arquivos de testes
+test/
+*.test
