@@ -1,7 +1,15 @@
 package br.com.todolist.entity;
 
-public class Subtarefa {
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
 
+@Entity
+public class Subtarefa {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
     private String titulo;
     private boolean status;
 
@@ -11,6 +19,14 @@ public class Subtarefa {
     public Subtarefa(String titulo) {
         this.titulo = titulo;
         this.status = false;
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
     }
 
     public String getTitulo() {

@@ -2,7 +2,6 @@ package br.com.todolist.ui.telasusuario;
 
 import br.com.todolist.entity.Usuario;
 import br.com.todolist.controller.GerenteDeUsuarios;
-import br.com.todolist.repository.GerenciadorDePersistenciaJson;
 import br.com.todolist.repository.Repositorio;
 import br.com.todolist.ui.telaPrincipal.TelaPrincipal;
 
@@ -18,7 +17,7 @@ public class TelaLogin extends JFrame {
 
     public TelaLogin() {
         super("Login - ToDo List");
-        Repositorio repositorio = new GerenciadorDePersistenciaJson("arquivos/usuarios.json");
+        Repositorio repositorio = new br.com.todolist.repository.RepositorioDB();
         this.gerenteDeUsuarios = new GerenteDeUsuarios(repositorio);
         configurarLayout();
         configurarAcoes();

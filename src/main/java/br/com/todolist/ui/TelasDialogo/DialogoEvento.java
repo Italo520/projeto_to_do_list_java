@@ -106,13 +106,7 @@ public class DialogoEvento extends JDialog {
 
         try {
             if (this.evento == null) {
-                boolean sucesso = orquestrador.cadastrarEvento(titulo, descricao, deadline);
-                if (!sucesso) {
-                    JOptionPane.showMessageDialog(this,
-                            "Não foi possível cadastrar o evento.\nVerifique se já não existe um evento com a mesma data para o seu usuário.",
-                            "Erro ao Cadastrar", JOptionPane.WARNING_MESSAGE);
-                    return;
-                }
+                orquestrador.cadastrarEvento(titulo, descricao, deadline);
             } else {
                 orquestrador.editarEvento(this.evento, titulo, descricao, deadline);
             }

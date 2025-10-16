@@ -1,11 +1,26 @@
 package br.com.todolist.entity;
 
 import java.time.LocalDate;
+import jakarta.persistence.Entity;
 
+import jakarta.persistence.ManyToOne;
+
+@Entity
 public class Evento extends Itens {
+
+    @ManyToOne
+    private Usuario usuario;
 
     public Evento(String titulo, String descricao, String criado_por, LocalDate deadline) {
         super(titulo, descricao, "Evento", criado_por, deadline);
+    }
+
+    public Usuario getUsuario() {
+        return usuario;
+    }
+
+    public void setUsuario(Usuario usuario) {
+        this.usuario = usuario;
     }
 
     public Evento() {

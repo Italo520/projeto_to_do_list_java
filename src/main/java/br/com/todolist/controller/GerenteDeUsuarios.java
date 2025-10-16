@@ -1,47 +1,15 @@
-// Em: src/main/java/br/com/todolist/controller/GerenteDeUsuarios.java
 package br.com.todolist.controller;
 
 import br.com.todolist.entity.Usuario;
 import br.com.todolist.repository.Repositorio;
-
-import java.io.File;
-import java.lang.reflect.Type;
-import java.util.ArrayList;
-import java.util.List;
 import org.mindrot.jbcrypt.BCrypt;
-import com.fasterxml.jackson.core.type.TypeReference;
 
 public class GerenteDeUsuarios {
 
     private Repositorio repositorio;
-    private List<Usuario> usuarios;
 
     public GerenteDeUsuarios(Repositorio repositorio) {
-        criarPastaDeArquivos();
         this.repositorio = repositorio;
-        this.usuarios = carregarUsuarios();
-    }
-
-    private void criarPastaDeArquivos() {
-        File pasta = new File("arquivos");
-        if (!pasta.exists()) {
-            if (pasta.mkdir()) {
-                System.out.println("Pasta 'arquivos' criada com sucesso.");
-            } else {
-                System.err.println("Erro ao criar a pasta 'arquivos'.");
-            }
-        }
-    }
-
-    private List<Usuario> carregarUsuarios() {
-        Type tipoListaDeUsuarios = new TypeReference<List<Usuario>>() {
-        }.getType();
-        List<Usuario> lista = repositorio.carregar(tipoListaDeUsuarios);
-        return lista != null ? lista : new ArrayList<>();
-    }
-
-    private void salvarUsuarios() {
-        repositorio.salvar(this.usuarios);
     }
 
     private String hashSenha(String senhaPura) {
@@ -49,19 +17,18 @@ public class GerenteDeUsuarios {
     }
 
     public boolean criarNovoUsuario(String nome, String email, String password) {
-        if (buscarUsuarioPorEmail(email) != null) {
+        if (repositorio.buscarUsuarioPorEmail(email) != null) {
             return false;
         }
 
         String senhaHasheada = hashSenha(password);
         Usuario novoUsuario = new Usuario(nome, email, senhaHasheada);
-        usuarios.add(novoUsuario);
-        salvarUsuarios();
+        repositorio.salvar(novoUsuario);
         return true;
     }
 
     public Usuario autenticarUsuario(String email, String password) {
-        Usuario usuario = buscarUsuarioPorEmail(email);
+        Usuario usuario = repositorio.buscarUsuarioPorEmail(email);
         if (usuario != null && verificarSenha(password, usuario.getPassword())) {
             System.out.println("Autenticação bem-sucedida para " + usuario.getNome());
             return usuario;
@@ -76,11 +43,6 @@ public class GerenteDeUsuarios {
     }
 
     public Usuario buscarUsuarioPorEmail(String email) {
-        for (Usuario usuario : usuarios) {
-            if (usuario.getEmail().equals(email)) {
-                return usuario;
-            }
-        }
-        return null;
+        return repositorio.buscarUsuarioPorEmail(email);
     }
 }

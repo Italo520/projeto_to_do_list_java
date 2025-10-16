@@ -3,15 +3,33 @@ package br.com.todolist.entity;
 import java.util.ArrayList;
 import java.util.List;
 import java.time.LocalDate;
+import jakarta.persistence.CascadeType;
+import jakarta.persistence.Entity;
+import jakarta.persistence.OneToMany;
 
+import jakarta.persistence.ManyToOne;
 
+@Entity
 public class Tarefa extends Itens {
 
     private LocalDate dataConclusao;
     private int prioridade;
+
+    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Subtarefa> subtarefas;
 
+    @ManyToOne
+    private Usuario usuario;
+
     public Tarefa() {
+    }
+
+    public Usuario getUsuario() {
+        return usuario;
+    }
+
+    public void setUsuario(Usuario usuario) {
+        this.usuario = usuario;
     }
 
     public Tarefa(String titulo, String descricao, String criado_por, LocalDate deadline, int prioridade) {

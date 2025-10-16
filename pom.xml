@@ -93,6 +93,19 @@
       <version>3.4.1</version> 
     </dependency>
 
+    <!-- Adicionando dependências do Hibernate e SQLite -->
+    <dependency>
+        <groupId>org.hibernate.orm</groupId>
+        <artifactId>hibernate-core</artifactId>
+        <version>6.4.4.Final</version>
+    </dependency>
+
+    <dependency>
+        <groupId>org.xerial</groupId>
+        <artifactId>sqlite-jdbc</artifactId>
+        <version>3.45.1.0</version>
+    </dependency>
+
   </dependencies>
   <repositories>
     <repository>

@@ -58,7 +58,7 @@ public class BarraFerramentas {
         
         JMenuItem listarEventosPorDia = new JMenuItem("Listar Eventos por Dia");
         listarEventosPorDia.addActionListener(new OuvinteListarEventosPorDia(frame, orquestrador));
-        
+
         JMenuItem listarEventosMesEspecifico = new JMenuItem("Listar Eventos por Mês");
         listarEventosMesEspecifico.addActionListener(new OuvinteListarEventosPorMes(frame, orquestrador));
 

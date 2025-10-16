@@ -240,7 +240,6 @@ public class PainelTarefas extends PainelBase {
                 Subtarefa subtarefa = modeloListaSubtarefas.getElementAt(index);
                 subtarefa.mudarStatus();
                 if (tarefaPai != null) {
-                    orquestrador.atualizarTarefa(tarefaPai);
                     atualizarDetalhesTarefa(tarefaPai);
                 }
                 listaDeSubtarefas.repaint(listaDeSubtarefas.getCellBounds(index, index));
@@ -259,7 +258,6 @@ public class PainelTarefas extends PainelBase {
             String descricao = JOptionPane.showInputDialog(PainelTarefas.this, "Descrição da nova subtarefa:", "Nova Subtarefa", JOptionPane.PLAIN_MESSAGE);
             if (descricao != null && !descricao.trim().isEmpty()) {
                 tarefaPai.adicionarSubtarefa(new Subtarefa(descricao));
-                orquestrador.atualizarTarefa(tarefaPai);
                 atualizarListaSubtarefas(tarefaPai);
                 atualizarDetalhesTarefa(tarefaPai);
                 listaDeTarefas.repaint();
@@ -278,7 +276,6 @@ public class PainelTarefas extends PainelBase {
             String novoTitulo = (String) JOptionPane.showInputDialog(PainelTarefas.this, "Nova descrição:", "Editar Subtarefa", JOptionPane.PLAIN_MESSAGE, null, null, subtarefa.getTitulo());
             if (novoTitulo != null && !novoTitulo.trim().isEmpty()) {
                 subtarefa.setTitulo(novoTitulo);
-                orquestrador.atualizarTarefa(tarefaPai);
                 atualizarListaSubtarefas(tarefaPai);
             }
         }
@@ -295,7 +292,6 @@ public class PainelTarefas extends PainelBase {
             int resposta = JOptionPane.showConfirmDialog(PainelTarefas.this, "Excluir a subtarefa '" + subtarefa.getTitulo() + "'?", "Confirmar Exclusão", JOptionPane.YES_NO_OPTION);
             if (resposta == JOptionPane.YES_OPTION) {
                 tarefaPai.removerSubtarefa(subtarefa);
-                orquestrador.atualizarTarefa(tarefaPai);
                 atualizarListaSubtarefas(tarefaPai);
                 atualizarDetalhesTarefa(tarefaPai);
                 listaDeTarefas.repaint();
