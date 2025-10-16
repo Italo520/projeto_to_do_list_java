@@ -1,7 +1,7 @@
-package br.com.todolist.service;
+package br.com.todolist.controller;
 
-import br.com.todolist.models.Tarefa;
-import br.com.todolist.models.Evento;
+import br.com.todolist.entity.Tarefa;
+import br.com.todolist.entity.Evento;
 import java.util.List;
 
 public class DadosUsuario {

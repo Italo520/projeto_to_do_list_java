@@ -1,7 +1,9 @@
 package br.com.todolist.ui.telasusuario;
 
-import br.com.todolist.models.Usuario;
-import br.com.todolist.service.GerenteDeUsuarios;
+import br.com.todolist.entity.Usuario;
+import br.com.todolist.controller.GerenteDeUsuarios;
+import br.com.todolist.repository.GerenciadorDePersistenciaJson;
+import br.com.todolist.repository.Repositorio;
 import br.com.todolist.ui.telaPrincipal.TelaPrincipal;
 
 import javax.swing.*;
@@ -16,7 +18,8 @@ public class TelaLogin extends JFrame {
 
     public TelaLogin() {
         super("Login - ToDo List");
-        this.gerenteDeUsuarios = new GerenteDeUsuarios();
+        Repositorio repositorio = new GerenciadorDePersistenciaJson("arquivos/usuarios.json");
+        this.gerenteDeUsuarios = new GerenteDeUsuarios(repositorio);
         configurarLayout();
         configurarAcoes();
     }
@@ -91,15 +94,13 @@ public class TelaLogin extends JFrame {
     private class OuvinteBotaoCriarConta implements java.awt.event.ActionListener {
         public void actionPerformed(java.awt.event.ActionEvent e) {
             TelaCadastro telaCadastro = new TelaCadastro(TelaLogin.this, gerenteDeUsuarios);
-            telaCadastro.setVisible(true); // O código para aqui até a tela de cadastro ser fechada
+            telaCadastro.setVisible(true);
 
-            // --- CÓDIGO NOVO AQUI ---
-            // Após a tela de cadastro fechar, verificamos se um email foi retornado
             String emailNovo = telaCadastro.getEmailCadastrado();
             if (emailNovo != null) {
-                campoEmail.setText(emailNovo); // Preenche o campo de email
-                campoSenha.setText(""); // Limpa o campo de senha
-                campoSenha.requestFocus(); // Coloca o foco no campo de senha para facilitar
+                campoEmail.setText(emailNovo);
+                campoSenha.setText("");
+                campoSenha.requestFocus();
             }
         }
     }

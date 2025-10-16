@@ -1,6 +1,6 @@
-package br.com.todolist.service;
+package br.com.todolist.controller;
 
-import br.com.todolist.models.Evento;
+import br.com.todolist.entity.Evento;
 import java.time.LocalDate;
 import java.time.YearMonth;
 import java.util.List;

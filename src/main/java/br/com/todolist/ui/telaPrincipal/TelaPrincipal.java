@@ -4,10 +4,17 @@ package br.com.todolist.ui.telaPrincipal;
 import java.util.List;
 import javax.swing.JFrame;
 import javax.swing.JTabbedPane;
-import br.com.todolist.models.Evento;
-import br.com.todolist.models.Tarefa;
-import br.com.todolist.models.Usuario;
-import br.com.todolist.service.Orquestrador;
+import br.com.todolist.controller.GerenteDeDadosDoUsuario;
+import br.com.todolist.controller.GerenteDeEventos;
+import br.com.todolist.controller.GerenteDeTarefas;
+import br.com.todolist.controller.Orquestrador;
+import br.com.todolist.entity.Evento;
+import br.com.todolist.entity.Tarefa;
+import br.com.todolist.entity.Usuario;
+import br.com.todolist.repository.GerenciadorDePersistenciaJson;
+import br.com.todolist.repository.Repositorio;
+import br.com.todolist.service.GeradorDeRelatorio;
+import br.com.todolist.service.Mensageiro;
 
 public class TelaPrincipal extends JFrame {
 
@@ -18,7 +25,17 @@ public class TelaPrincipal extends JFrame {
 
     public TelaPrincipal(Usuario usuarioLogado) {
         super("Usuário: " + usuarioLogado.getNome());
-        this.orquestrador = new Orquestrador(usuarioLogado);
+
+        // Composition Root
+        Repositorio repositorio = new GerenciadorDePersistenciaJson("arquivos/dados_globais.json");
+        GerenteDeDadosDoUsuario dadosDoUsuario = new GerenteDeDadosDoUsuario(repositorio);
+        GerenteDeTarefas gerenteDeTarefas = new GerenteDeTarefas(dadosDoUsuario, usuarioLogado.getEmail());
+        GerenteDeEventos gerenteDeEventos = new GerenteDeEventos(dadosDoUsuario, usuarioLogado.getEmail());
+        Mensageiro mensageiro = new Mensageiro();
+        GeradorDeRelatorio geradorDeRelatorio = new GeradorDeRelatorio();
+
+        this.orquestrador = new Orquestrador(gerenteDeTarefas, gerenteDeEventos, mensageiro, geradorDeRelatorio, usuarioLogado);
+
         configurarJanela();
         montarLayout();
     }

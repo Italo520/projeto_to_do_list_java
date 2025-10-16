@@ -1,4 +1,4 @@
-package br.com.todolist.models;
+package br.com.todolist.entity;
 
 public class Usuario {
     private String nome;

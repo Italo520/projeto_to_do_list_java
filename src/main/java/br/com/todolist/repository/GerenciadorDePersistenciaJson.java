@@ -1,5 +1,5 @@
 // Em: src/main/java/br/com/todolist/persistence/GerenciadorDePersistenciaJson.java
-package br.com.todolist.persistence;
+package br.com.todolist.repository;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
@@ -10,7 +10,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.lang.reflect.Type;
 
-public class GerenciadorDePersistenciaJson {
+public class GerenciadorDePersistenciaJson implements Repositorio {
 
     private final ObjectMapper objectMapper;
     private final File arquivo;
@@ -22,6 +22,7 @@ public class GerenciadorDePersistenciaJson {
         this.arquivo = new File(nomeArquivo);
     }
 
+    @Override
     public void salvar(Object objeto) {
         try (FileWriter writer = new FileWriter(arquivo)) {
             objectMapper.writeValue(writer, objeto);
@@ -31,6 +32,7 @@ public class GerenciadorDePersistenciaJson {
         }
     }
 
+    @Override
     public <T> T carregar(Type tipoDeDados) {
         if (!arquivo.exists() || arquivo.length() == 0) {
             return null;

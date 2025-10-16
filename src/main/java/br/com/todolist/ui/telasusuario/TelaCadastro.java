@@ -1,6 +1,6 @@
 package br.com.todolist.ui.telasusuario;
 
-import br.com.todolist.service.GerenteDeUsuarios;
+import br.com.todolist.controller.GerenteDeUsuarios;
 
 import javax.swing.*;
 import java.awt.*;

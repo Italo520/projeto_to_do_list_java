@@ -1,7 +1,7 @@
 package br.com.todolist.ui.telaPrincipal;
 
-import br.com.todolist.models.Evento;
-import br.com.todolist.service.Orquestrador;
+import br.com.todolist.entity.Evento;
+import br.com.todolist.controller.Orquestrador;
 import br.com.todolist.ui.TelasDialogo.DialogoEvento;
 
 import javax.swing.*;

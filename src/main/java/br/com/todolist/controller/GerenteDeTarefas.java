@@ -1,6 +1,6 @@
-package br.com.todolist.service;
+package br.com.todolist.controller;
 
-import br.com.todolist.models.Tarefa;
+import br.com.todolist.entity.Tarefa;
 import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
 import java.util.List;

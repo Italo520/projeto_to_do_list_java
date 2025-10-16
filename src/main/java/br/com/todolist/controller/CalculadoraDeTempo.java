@@ -1,4 +1,4 @@
-package br.com.todolist.service;
+package br.com.todolist.controller;
 
 import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;

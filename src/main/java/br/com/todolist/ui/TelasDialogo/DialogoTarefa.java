@@ -1,7 +1,7 @@
 package br.com.todolist.ui.TelasDialogo;
 
-import br.com.todolist.models.Tarefa;
-import br.com.todolist.service.Orquestrador;
+import br.com.todolist.entity.Tarefa;
+import br.com.todolist.controller.Orquestrador;
 
 import javax.swing.*;
 import java.awt.*;
